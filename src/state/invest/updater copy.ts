@@ -16,10 +16,10 @@ import useIsWindowVisible from 'hooks/useIsWindowVisible'
 
 let cancelation = false
 
-export default function Updater({ account }) {
+export default function Updater() {
   const dispatch = useDispatch()
   const [data, setData] = useState({})
-  const { chainId } = useActiveWeb3React()
+  const { chainId, account } = useActiveWeb3React()
   const investContract = useInvestContract()
   const multiContract = getMulticallContract()
   const latestBlockNumber = useBlockNumber()
@@ -31,8 +31,15 @@ export default function Updater({ account }) {
         ? {
             ifs: investContract.interface,
             address: investContract.address,
-            methods: ['users', 'userBalances', 'calculateInterest', 'userDepositNumber', 'userDepositDetails'],
-            args: [[account], [account], [account], [account], [account, 0]],
+            methods: [
+              'maxPercent',
+              'userBalances',
+              'users',
+              'calculateInterest',
+              'userDepositNumber',
+              'userDepositDetails',
+            ],
+            args: [[], [account], [account], [account], [account], [account, 0]],
           }
         : {
             ifs: investContract.interface,
@@ -61,11 +68,11 @@ export default function Updater({ account }) {
           multicalls.args.push([account, i])
           multicalls.methods.push('userDepositDetails')
         }
-        singleContractMultiCallRequest(multiContract, multicalls, false).then((userDepositDetails) => {
-          if (!cancelation) setData({ ...results, userDepositDetails })
+        singleContractMultiCallRequest(multiContract, multicalls, false).then((res) => {
+          if (!cancelation) setData({ ...results, userDepositDetails: res })
         })
       } else {
-        if (!cancelation) setData({ ...results, userDepositDetails: [results.userDepositDetails] })
+        if (!cancelation) setData(results)
       }
     }
     if (calls && !cancelation) {
@@ -85,7 +92,7 @@ export default function Updater({ account }) {
           ...items,
           [method]:
             method === 'userDepositDetails'
-              ? data[method].map((d: { [key: string]: string }) => (d ? resConverter(d) : '0'))
+              ? data[method].map((d: { [key: string]: string }) => resConverter(d))
               : resConverter(data[method]),
         },
       {},

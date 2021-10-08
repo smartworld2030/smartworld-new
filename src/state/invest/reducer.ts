@@ -22,7 +22,10 @@ export interface InvestData {
     refPercent: string
     latestWithdraw: string
   }
+  userDepositNumber: string
+  userDepositDetails: any
 }
+
 const defaultInvestData = {
   maxPercent: '1000',
   calculateInterest: {
@@ -44,6 +47,8 @@ const defaultInvestData = {
     refPercent: '0',
     latestWithdraw: '0',
   },
+  userDepositNumber: '0',
+  userDepositDetails: [{ reward: '0', endTime: '0' }],
 }
 
 export interface InvestState {

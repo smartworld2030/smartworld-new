@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { updatePoolStates } from './actions'
-import { useInvestContract } from 'hooks/useContract'
+import { usePoolContract } from 'hooks/useContract'
 import {
   MultiCallMultipleData,
   singleContractMultiCallRequest,
@@ -16,11 +16,11 @@ import useIsWindowVisible from 'hooks/useIsWindowVisible'
 
 let cancelation = false
 
-export default function Updater(): null {
+export default function Updater() {
   const dispatch = useDispatch()
   const [data, setData] = useState({})
   const { chainId, account } = useActiveWeb3React()
-  const investContract = useInvestContract()
+  const poolContract = usePoolContract()
   const multiContract = getMulticallContract()
   const latestBlockNumber = useBlockNumber()
   const windowVisible = useIsWindowVisible()
@@ -29,54 +29,45 @@ export default function Updater(): null {
     () => [
       account
         ? {
-            ifs: investContract.interface,
-            address: investContract.address,
+            ifs: poolContract.interface,
+            address: poolContract.address,
             methods: [
-              'maxPercent',
-              'userBalances',
+              'freezePrice',
+              'userFreezeInfo',
               'users',
               'calculateInterest',
-              'users',
+              'calculateDaily',
               'userDepositNumber',
-              'userDepositDetails',
             ],
-            args: [[], [account], [account], [account], [account], [account], [account, 0]],
+            args: [
+              [],
+              [account, 0],
+              [account],
+              [account],
+              [account, Math.floor(Date.now() / 1000)],
+              [account],
+              [account, 0],
+            ],
           }
         : {
-            ifs: investContract.interface,
-            address: investContract.address,
-            methods: ['maxPercent'],
+            ifs: poolContract.interface,
+            address: poolContract.address,
+            methods: ['freezePrice'],
             args: [[]],
           },
     ],
-    [investContract, account],
+    [poolContract, account],
   )
 
   useEffect(() => {
     if (!latestBlockNumber || !windowVisible) return
-    let cancelation = false
+    cancelation = false
     async function multiCallRequest() {
-      const results = await multiCallMultipleData(multiContract, calls, { requireSuccess: false })
-      const length = Number(results?.userDepositNumber?.toString())
-      if (length > 1) {
-        const multicalls: MultiCallMultipleData = {
-          ifs: investContract.interface,
-          address: investContract.address,
-          methods: ['userDepositDetails'],
-          args: [[account, 0]],
-        }
-        for (let i = 1; i < length; i++) {
-          multicalls.args.push([account, i])
-          multicalls.methods.push('userDepositDetails')
-        }
-        singleContractMultiCallRequest(multiContract, multicalls, false).then((res) => {
-          if (!cancelation) setData({ ...results, userDepositDetails: res })
-        })
-      } else {
-        if (!cancelation) setData(results)
-      }
+      multiCallMultipleData(multiContract, calls).then((res) => {
+        if (!cancelation) setData(res)
+      })
     }
-    if (calls) {
+    if (calls && !cancelation) {
       multiCallRequest()
     }
     return () => {

@@ -12,6 +12,7 @@ import burn from './burn/reducer'
 import multicall from './multicall/reducer'
 import mint from './mint/reducer'
 import invest from './invest/reducer'
+import pool from './pool/reducer'
 
 const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists']
 
@@ -21,6 +22,7 @@ export const store = configureStore({
     // Exchange
     application,
     invest,
+    pool,
     bank,
     user,
     transactions,

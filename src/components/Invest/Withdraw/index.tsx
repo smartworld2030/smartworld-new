@@ -4,14 +4,15 @@ import {
   Flex,
   Text,
   TooltipText,
-  ChildrenProps,
   MainFlex,
   Skeleton,
   MainComp,
+  useWindowSize,
 } from '@smartworld-libs/uikit'
 import { useBankDollars } from 'state/bank/hooks'
 
-const MainWithdrawSection = ({ flex, isMobile, isTablet }: ChildrenProps) => {
+const MainWithdrawSection = () => {
+  const { flexSize, isMobile, isTablet } = useWindowSize()
   const {
     calculateInterest: { referral, hourly },
     users: { latestWithdraw },
@@ -32,14 +33,14 @@ const MainWithdrawSection = ({ flex, isMobile, isTablet }: ChildrenProps) => {
     : '0.00'
 
   return (
-    <MainFlex {...{ flex: 3, md: 6, sm: 4, xs: 4 }}>
+    <MainFlex {...{ flex: 3, md: 6, sm: 6, xs: 6 }}>
       <MainComp
         tip="Withdraw Circle"
         flex={12}
         justifyContent="space-around"
         alignItems="center"
         tipSize={3}
-        demo={<Skeleton size={isMobile ? flex * 3.5 : isTablet ? flex * 2.5 : flex * 2} />}
+        demo={<Skeleton size={isMobile ? flexSize * 3.5 : isTablet ? flexSize * 2.5 : flexSize * 2} />}
       >
         <WithdrawCircle
           progressSize={5}
@@ -58,7 +59,7 @@ const MainWithdrawSection = ({ flex, isMobile, isTablet }: ChildrenProps) => {
               <TooltipText fontSize="8px">REFERRAL</TooltipText>
             </>
           }
-          size={isMobile ? flex * 4 : isTablet ? flex * 3 : flex * 2}
+          size={isMobile ? flexSize * 4 : isTablet ? flexSize * 3 : flexSize * 2}
           onClick={+referral + +hourly > 0 ? () => console.log('withdraw') : undefined}
         />
       </MainComp>

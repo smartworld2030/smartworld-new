@@ -1,4 +1,4 @@
-import { BalanceInput, ChildrenProps, Flex, MainComp, MainFlex, Skeleton } from '@smartworld-libs/uikit'
+import { BalanceInput, MainComp, MainFlex, Skeleton, useWindowSize } from '@smartworld-libs/uikit'
 import { useState, useEffect } from 'react'
 import { useBankDollars, useBankSatoshi } from 'state/bank/hooks'
 import { useInvestTokenBalances } from 'state/wallet/hooks'
@@ -7,7 +7,8 @@ import DepositInfo from './DepositInfo'
 
 export const tokenNames = ['STTS', 'BNB', 'BTC']
 
-export const MainDepositSection = ({ isMobile, isTablet, flex }) => {
+export const MainDepositSection = () => {
+  const { flexSize, isMobile, isTablet } = useWindowSize()
   const dollar = useBankDollars()
   const prices = useBankSatoshi()
   const tokens = useInvestTokenBalances()
@@ -104,7 +105,7 @@ export const MainDepositSection = ({ isMobile, isTablet, flex }) => {
         justifyContent="space-around"
         alignItems="center"
         tipSize={3}
-        demo={<Skeleton size={isMobile ? flex * 3.5 : isTablet ? flex * 2.5 : flex * 2} />}
+        demo={<Skeleton size={isMobile ? flexSize * 3.5 : isTablet ? flexSize * 2.5 : flexSize * 2} />}
       >
         <BalanceInput
           value={values[editingUnit]}
@@ -114,7 +115,7 @@ export const MainDepositSection = ({ isMobile, isTablet, flex }) => {
           currencyValue={currencyValues}
           currencyUnit={conversionUnit}
           placeholder={balanceValues()}
-          size={isMobile ? flex * 4 : isTablet ? flex * 3 : flex * 2}
+          size={isMobile ? flexSize * 4 : isTablet ? flexSize * 3 : flexSize * 2}
           borderColor="transparent"
           progressColor={balanceValues() === '0' ? 'transparent' : undefined}
           borderSize={2}
@@ -125,7 +126,7 @@ export const MainDepositSection = ({ isMobile, isTablet, flex }) => {
       </MainComp>
       <MainComp
         tip="Long Press Button"
-        flex={6}
+        flex={3}
         justifyContent="space-around"
         alignItems="center"
         tipSize={3}
