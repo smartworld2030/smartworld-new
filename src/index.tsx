@@ -18,10 +18,7 @@ import { ThemeProvider } from 'styled-components'
 import { LanguageProvider } from 'contexts/Localization'
 import { RefreshContextProvider } from 'contexts/RefreshContext'
 import { ToastsProvider } from 'contexts/ToastsContext'
-import Investment from 'components/Invest'
 import { BrowserRouter as Router } from 'react-router-dom'
-import { Switch } from 'react-router'
-import Swap from 'components/Swap'
 
 function Updaters() {
   return (

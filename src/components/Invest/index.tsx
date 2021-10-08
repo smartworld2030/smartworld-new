@@ -1,9 +1,5 @@
 import Updater from 'state/invest/updater'
-import MainWithdrawSection from './Withdraw'
-import MainDepositSection from './Deposit'
-import MainDetailSection from './Details'
-import { MainRoute } from '@smartworld-libs/uikit'
-import { Route, RouteProps } from 'react-router'
+import { RouteProps } from 'react-router'
 import useInvestStates from 'state/invest/hooks'
 
 const MainInvestment: React.FC<RouteProps & { account: string }> = (props) => {
@@ -27,7 +23,7 @@ const MainInvestment: React.FC<RouteProps & { account: string }> = (props) => {
                           {item}:
                           {Object.keys(data[str][item]).map((k, l) => {
                             return (
-                              <p key={l}>
+                              <div key={l}>
                                 {k === 'endTime' ? (
                                   <p>
                                     startTime: {(720 - (Number(data[str][item][k]) - 1036800 - time) / 86400).toFixed()}
@@ -35,7 +31,7 @@ const MainInvestment: React.FC<RouteProps & { account: string }> = (props) => {
                                 ) : (
                                   <p>reward: {Number(data[str][item][k].toString()) / 10 ** 8}</p>
                                 )}
-                              </p>
+                              </div>
                             )
                           })}
                         </li>
