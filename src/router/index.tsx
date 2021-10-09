@@ -23,7 +23,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({ width }) => {
   const { account } = useActiveWeb3React()
 
   const STTS = useERC20('0x88469567A9e6b2daE2d8ea7D8C77872d9A0d43EC')
-  const [address, setAccount] = useState('0x2dcfccc54e8bf3bb6117ceae53cc2595488e89d3')
+  const [address, setAccount] = useState('')
   const [inputData, setInputData] = useState('')
   const [value, setValue] = useState(0)
   const [check, setCheck] = useState({})
@@ -50,10 +50,10 @@ export const AppRouter: React.FC<AppRouterProps> = ({ width }) => {
         <button onClick={sendStts}>Send</button>
       </Flex>
       <Flex>
-        <Flex width="50%" height="93vh" overflowY="scroll" flexDirection="column">
+        <Flex width="50%" height="97vh" overflowY="scroll" flexDirection="column">
           <MainInvestment exact strict path={['/investment', '/invest']} account={address} />
         </Flex>
-        <Flex width="50%" height="93vh" overflowY="scroll" flexDirection="column" borderLeft="2px solid white">
+        <Flex width="50%" height="97vh" overflowY="scroll" flexDirection="column" borderLeft="2px solid white">
           {holders.map((h, i) => (
             <Flex alignItems="baseline" key={i}>
               {i}-

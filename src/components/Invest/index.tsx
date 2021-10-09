@@ -1,6 +1,7 @@
 import Updater from 'state/invest/updater'
 import { RouteProps } from 'react-router'
 import useInvestStates from 'state/invest/hooks'
+import { BASE_BSC_SCAN_URL } from 'config'
 
 const MainInvestment: React.FC<RouteProps & { account: string }> = (props) => {
   const data = useInvestStates()
@@ -9,6 +10,14 @@ const MainInvestment: React.FC<RouteProps & { account: string }> = (props) => {
   return (
     <div>
       <Updater account={props.account} />
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href={`${BASE_BSC_SCAN_URL}/token/0x88469567a9e6b2dae2d8ea7d8c77872d9a0d43ec?a=${props.account}`}
+      >
+        Latest Transcaction
+      </a>
+      <hr />
       {data ? (
         Object.keys(data).map((str, i) => {
           return (
