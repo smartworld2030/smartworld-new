@@ -1,37 +1,17 @@
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { usePollBlockNumber } from 'state/block/hooks'
 import useEagerConnect from 'hooks/useEagerConnect'
-import { Switch } from 'react-router-dom'
-import { Redirect, Route } from 'react-router'
 import GlobalStyle from 'style/Global'
 // import {
 //   RedirectDuplicateTokenIds,
 //   RedirectOldAddLiquidityPathStructure,
 //   RedirectToAddLiquidity,
 // } from "components/Swap/AddLiquidity/redirects";
-import {
-  BoxProps,
-  Language,
-  Modal,
-  CogIcon,
-  IconButton,
-  ThemeSwitcher,
-  Toggle,
-  NoProfileAvatarIcon,
-  Flex,
-} from '@smartworld-libs/uikit'
-import SuspenseWithChunkError from 'components/SuspenseWithChunkError'
-import PageLoader from 'components/Loader/PageLoader'
-// import RedirectOldRemoveLiquidityPathStructure from "components/Swap/RemoveLiquidity/redirects";
-import { RedirectPathToSwapOnly, RedirectToSwap } from 'components/Swap/redirects'
-import { AnimatedTipFlex, MainSection, LogoIcon, SwapIcon, Spinner } from '@smartworld-libs/uikit'
+import { BoxProps, Language, CogIcon, IconButton, ThemeSwitcher, Toggle, Flex } from '@smartworld-libs/uikit'
 
 import { InjectedProps } from '@smartworld-libs/uikit/dist/widgets/Modal/types'
 import useTheme from 'hooks/useTheme'
 import MainInvestment from 'components/Invest'
-import MainPool from 'components/Pool'
-import MainSwap from 'components/Swap'
-import WalletModal, { WalletView } from 'components/Menu/UserMenu/WalletModal'
 import { useERC20 } from 'hooks/useContract'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import holders from '../holderaccounts'
@@ -71,24 +51,6 @@ export const AppRouter: React.FC<AppRouterProps> = ({ width }) => {
 
   const sendStts = () => STTS.functions.transfer(account, value * 10 ** 8)
 
-  const Titles = useMemo(
-    () => [
-      {
-        label: 'INVESTMENT',
-        href: '/invest',
-        icon: <LogoIcon />,
-      },
-      { label: 'INFORMATION', href: '/info', icon: <LogoIcon /> },
-      {
-        label: 'POOL',
-        href: '/pool',
-        icon: <LogoIcon />,
-      },
-      { label: 'SWAP', href: '/swap', icon: <LogoIcon /> },
-      { label: 'STB', href: '/stb', icon: <LogoIcon /> },
-    ],
-    [],
-  )
   return (
     <Flex width="100%" height="100%" flexDirection="column">
       <GlobalStyle />
