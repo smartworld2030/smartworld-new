@@ -9,8 +9,6 @@ const App = () => {
   const globeHeight = height * 0.6
   return height && width ? (
     <Router>
-      {/* <Header width={width} />
-      <Globe height={globeHeight} width={width} /> */}
       <AppRouter isMobile={isMobile} width={width} height={height - globeHeight} />
     </Router>
   ) : (

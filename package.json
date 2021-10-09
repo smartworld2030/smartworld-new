@@ -41,6 +41,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:dev": "NODE_ENV=dev npm run build --dev --configuration=dev && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

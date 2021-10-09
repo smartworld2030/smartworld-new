@@ -6,7 +6,6 @@ import App from './App'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { BLOCKED_ADDRESSES } from 'config/constants'
 import ApplicationUpdater from 'state/application/updater'
-import MulticallUpdater from 'state/multicall/updater'
 import TransactionUpdater from 'state/transactions/updater'
 import { getLibrary } from 'utils/web3React'
 import { useThemeManager } from 'state/user/hooks'
@@ -24,7 +23,7 @@ function Updaters() {
     <>
       <ApplicationUpdater />
       <TransactionUpdater />
-      <MulticallUpdater />
+      {/* <MulticallUpdater /> */}
     </>
   )
 }
