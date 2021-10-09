@@ -1,6 +1,4 @@
-import { BrowserRouter as Router, Switch } from 'react-router-dom'
-import Globe from 'components/Globe/Globe'
-import { Header } from 'components/Header'
+import { BrowserRouter as Router } from 'react-router-dom'
 import AppRouter from 'router'
 import { useWindowSize } from 'hooks/useWindowsSize'
 import { Flex, Spinner } from '@smartworld-libs/uikit'
