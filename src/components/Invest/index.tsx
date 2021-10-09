@@ -6,7 +6,7 @@ const MainInvestment: React.FC<RouteProps & { account: string }> = (props) => {
   const data = useInvestStates()
   const time = Date.now() / 1000
 
-  return (
+  return data ? (
     <div>
       <Updater account={props.account} />
       {Object.keys(data).map((str, i) => {
@@ -61,6 +61,8 @@ const MainInvestment: React.FC<RouteProps & { account: string }> = (props) => {
         )
       })}
     </div>
+  ) : (
+    <div>'loading...'</div>
   )
 }
 
