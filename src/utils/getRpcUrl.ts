@@ -13,7 +13,7 @@ export const testNodes = [
 ]
 
 const getNodeUrl = () => {
-  return process.env.REACT_APP_CHAIN_ID === '56' ? sample(nodes) : sample(testNodes)
+  return sample(nodes)
 }
 
 export default getNodeUrl
