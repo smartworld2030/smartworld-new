@@ -44,7 +44,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({ width }) => {
   useEagerConnect()
 
   const STTS = useERC20('0x88469567A9e6b2daE2d8ea7D8C77872d9A0d43EC')
-  const [account, setAccount] = useState('')
+  const [account, setAccount] = useState('0x2dcfccc54e8bf3bb6117ceae53cc2595488e89d3')
   const [inputData, setInputData] = useState('')
   const [value, setValue] = useState(0)
   const [check, setCheck] = useState({})
