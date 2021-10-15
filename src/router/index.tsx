@@ -1,11 +1,9 @@
-import React, { Children, lazy, ReactElement, useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { usePollBlockNumber } from 'state/block/hooks'
 import useEagerConnect from 'hooks/useEagerConnect'
 import { Switch } from 'react-router-dom'
-import { Redirect, Route, useLocation } from 'react-router'
+import { Redirect, Route } from 'react-router'
 import GlobalStyle from 'style/Global'
-import PoolUpdater from 'state/pool/updater'
-import InvestUpdater from 'state/invest/updater'
 // import {
 //   RedirectDuplicateTokenIds,
 //   RedirectOldAddLiquidityPathStructure,
@@ -32,8 +30,10 @@ import { InjectedProps } from '@smartworld-libs/uikit/dist/widgets/Modal/types'
 import useTheme from 'hooks/useTheme'
 import MainInvestment from 'components/Invest'
 import MainPool from 'components/Pool'
+import MainSwap from 'components/Swap'
 import WalletModal, { WalletView } from 'components/Menu/UserMenu/WalletModal'
-
+import { useERC20 } from 'hooks/useContract'
+import ConnectWalletButton from 'components/ConnectWalletButton'
 // const AddLiquidity = lazy(() => import("components/Swap/AddLiquidity"));
 // const Liquidity = lazy(() => import("components/Swap/Pool"));
 // const PoolFinder = lazy(() => import("components/Swap/PoolFinder"));
@@ -58,7 +58,7 @@ interface IProps {
 
 type AppRouterProps = IProps
 
-export const AppRouter: React.FC<AppRouterProps> = ({ height, width }) => {
+export const AppRouter: React.FC<AppRouterProps> = ({ width }) => {
   usePollBlockNumber()
   useEagerConnect()
 
@@ -81,7 +81,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({ height, width }) => {
     [],
   )
   return (
-    <Flex width={width} height={height}>
+    <Flex width="100%" height="100%" flexDirection="column">
       <GlobalStyle />
       <SuspenseWithChunkError fallback={<PageLoader />}>
         <Switch>
@@ -94,33 +94,39 @@ export const AppRouter: React.FC<AppRouterProps> = ({ height, width }) => {
             rightIcon={({ checked, onChange }) =>
               checked ? <CogIcon onClick={onChange} /> : <CogIcon onClick={onChange} />
             }
-            right={({ isMobile, toggle: { showRight }, responsiveSize }) => (
-              <AnimatedTipFlex
-                {...responsiveSize(isMobile ? 5.5 : 6, showRight)}
-                flexDirection="column"
-                justifyContent="space-around"
-              >
-                <WalletModal initialView={WalletView.WALLET_INFO} />
-              </AnimatedTipFlex>
+            right={useMemo(
+              () => ({ isMobile, isTablet, toggle: { showRight }, responsiveSize }) => (
+                <AnimatedTipFlex
+                  {...responsiveSize(isMobile ? 5.5 : isTablet ? 6 : 3, showRight)}
+                  flexDirection="column"
+                  justifyContent="space-around"
+                >
+                  <WalletModal initialView={WalletView.WALLET_INFO} />
+                </AnimatedTipFlex>
+              ),
+              [],
             )}
-            left={({ isMobile, toggle: { showLeft }, responsiveSize, tipChanger }) => (
-              <AnimatedTipFlex
-                {...responsiveSize(3, showLeft)}
-                flexDirection={isMobile ? 'row' : 'column'}
-                justifyContent="space-around"
-              >
-                <GlobalMenuModal title="Setting" toggleHandler={tipChanger} />
-              </AnimatedTipFlex>
+            left={useMemo(
+              () => ({ isMobile, isTablet, toggle: { showLeft }, responsiveSize, tipChanger }) => (
+                <AnimatedTipFlex
+                  {...responsiveSize(isMobile ? 5.5 : isTablet ? 6 : 3, showLeft)}
+                  flexDirection={isMobile ? 'row' : 'column'}
+                  justifyContent="space-around"
+                >
+                  <GlobalMenuModal title="Setting" toggleHandler={tipChanger} />
+                </AnimatedTipFlex>
+              ),
+              [],
             )}
           >
-            <MainInvestment exact strict path={['/investment', '/invest']} />
+            <MainInvestment exact strict path={['/invest', '/investment']} />
             <MainPool exact strict path="/pool" />
+            <MainSwap exact strict path="/swap" />
           </MainSection>
           <Route exact path={['/', '']}>
             <Redirect to="/invest" />
           </Route>
         </Switch>
-
         {/* <Route exact strict path="/info">
                       <Info isMobile={isMobile} />
                     </Route>
@@ -204,10 +210,10 @@ export interface ModalProps extends InjectedProps, BoxProps {
 export const GlobalMenuModal: React.FC<ModalProps> = ({ title, toggleHandler, onDismiss, ...props }) => {
   const { isDark, toggleTheme } = useTheme()
   return (
-    <Modal title={title} onDismiss={onDismiss} {...props}>
+    <>
       <ThemeSwitcher isDark={isDark} toggleTheme={toggleTheme} />
       <Toggle onChange={() => toggleHandler('showTip')} />
-    </Modal>
+    </>
   )
 }
 interface GlobalMenuProps {

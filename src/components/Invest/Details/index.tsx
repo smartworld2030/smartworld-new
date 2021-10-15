@@ -7,10 +7,10 @@ import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useUserInvestDetails } from 'state/invest/hooks'
 import useToast from 'hooks/useToast'
 import useTheme from 'hooks/useTheme'
-import { ChildrenProps, MainComp, MainFlex, Skeleton } from '@smartworld-libs/uikit'
+import { MainComp, MainFlex, Skeleton, useWindowSize } from '@smartworld-libs/uikit'
 
-export const MainDetailSection = ({ isMobile, isTablet, flex }: ChildrenProps) => {
-  console.log(isTablet)
+export const MainDetailSection = () => {
+  const { flexSize, isMobile, isTablet } = useWindowSize()
   const { account } = useActiveWeb3React()
   const {
     userBalances: { satoshi },
@@ -45,7 +45,7 @@ export const MainDetailSection = ({ isMobile, isTablet, flex }: ChildrenProps) =
       >
         {done ? (
           <QRCode
-            size={isMobile ? flex * 4 : isTablet ? flex * 3 : flex * 2}
+            size={isMobile ? flexSize * 4 : isTablet ? flexSize * 3 : flexSize * 2}
             value={link}
             bgColor={colors.background}
             fgColor="white"

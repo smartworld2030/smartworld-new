@@ -1,10 +1,23 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { CurrencyAmount, JSBI, Token, Trade } from '@pancakeswap/sdk'
-import { Button, Text, ArrowDownIcon, useModal, Flex, NotificationDot, ChildrenProps } from '@smartworld-libs/uikit'
+import {
+  Button,
+  Text,
+  ArrowDownIcon,
+  useModal,
+  Flex,
+  NotificationDot,
+  ChildrenProps,
+  useWindowSize,
+  MainFlex,
+  MainComp,
+  Skeleton,
+  MainRoute,
+} from '@smartworld-libs/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/UnsupportedCurrencyFooter'
-import { RouteComponentProps } from 'react-router-dom'
+import { RouteComponentProps, RouteProps, useHistory } from 'react-router'
 import { useTranslation } from 'contexts/Localization'
 import SwapWarningTokens from 'config/constants/swapWarningTokens'
 import { getAddress } from 'utils/addressHelpers'
@@ -33,7 +46,7 @@ import { maxAmountSpend } from 'utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from 'utils/prices'
 import CircleLoader from 'components/Loader/CircleLoader'
 import SwapWarningModal from './components/SwapWarningModal'
-import { Row, Col } from 'react-grid-system'
+import { Row } from 'react-grid-system'
 import GlobalSettings from 'components/Menu/GlobalSettings'
 import Transactions from 'components/App/Transactions'
 
@@ -43,7 +56,9 @@ const Label = styled(Text)`
   color: ${({ theme }) => theme.colors.secondary};
 `
 
-export default function Swap({ history, isMobile }: RouteComponentProps & ChildrenProps) {
+export default function Swap(props: RouteProps) {
+  const history = useHistory()
+  const { isMobile, isTablet, flexSize } = useWindowSize()
   const loadedUrlParams = useDefaultsFromURLSearch()
   const [setting, setSetting] = useState(null)
 
@@ -333,7 +348,7 @@ export default function Swap({ history, isMobile }: RouteComponentProps & Childr
           </NotificationDot>
           <ArrowWrapper
             clickable
-            rotate={isMobile && '270deg'}
+            rotate={isMobile ? '270deg' : undefined}
             onClick={() => {
               setApprovalSubmitted(false) // reset 2 step UI for approvals
               onSwitchTokens()
@@ -406,28 +421,43 @@ export default function Swap({ history, isMobile }: RouteComponentProps & Childr
           : t('Swap'))}
     </Button>
   )
-  return [
-    {
-      size: 4,
-      item: <Currency />,
-    },
-    {
-      size: 2,
-      item: (
-        <Row
-          direction={isMobile ? 'column' : 'row'}
-          justify="center"
-          style={{ height: isMobile ? 600 : 300, width: isMobile ? '100%' : '80%', margin: 'auto' }}
+  return (
+    <MainRoute {...props}>
+      <MainFlex {...{ flex: 6, md: 12, sm: 12, xs: 12 }}>
+        <MainComp
+          tip="Withdraw Circle"
+          flex={2}
+          justifyContent="space-around"
+          alignItems="center"
+          tipSize={3}
+          demo={<Skeleton size={isMobile ? flexSize * 3.5 : isTablet ? flexSize * 2.5 : flexSize * 2} />}
         >
-          <Col>{!showWrap && <Prices />}</Col>
-          <Col>{setting && setting}</Col>
-        </Row>
-      ),
-    },
-    {
-      size: 2,
-      item: (
-        <Flex mt="1rem" alignItems="center" justifyContent="center" flexDirection="column">
+          <Currency />
+        </MainComp>
+      </MainFlex>
+      <MainFlex {...{ flex: 6, md: 12, sm: 12, xs: 12 }}>
+        <MainComp
+          tip="Withdraw Circle"
+          flex={2}
+          justifyContent="space-around"
+          alignItems="center"
+          tipSize={3}
+          demo={<Skeleton size={isMobile ? flexSize * 3.5 : isTablet ? flexSize * 2.5 : flexSize * 2} />}
+        >
+          <div>{!showWrap && <Prices />}</div>
+          <div>{setting && setting}</div>
+        </MainComp>
+      </MainFlex>
+      <MainFlex {...{ flex: 6, md: 12, sm: 12, xs: 12 }}>
+        <MainComp
+          tip="Withdraw Circle"
+          flex={4}
+          justifyContent="space-around"
+          alignItems="center"
+          tipSize={3}
+          demo={<Skeleton size={isMobile ? flexSize * 3.5 : isTablet ? flexSize * 2.5 : flexSize * 2} />}
+        >
+          {' '}
           {swapIsUnsupported ? (
             <Button shape="circle" scale="lg" width="300px" disabled mb="4px">
               {t('Unsupported Asset')}
@@ -502,8 +532,8 @@ export default function Swap({ history, isMobile }: RouteComponentProps & Childr
           ) : (
             <SwapButton />
           )}
-        </Flex>
-      ),
-    },
-  ]
+        </MainComp>
+      </MainFlex>
+    </MainRoute>
+  )
 }

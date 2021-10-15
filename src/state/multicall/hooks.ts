@@ -417,7 +417,6 @@ export async function multiCallRequest(multiContract, multiCalls: MultiCallSingl
   try {
     const multiCall = calls.map(({ target, callData }) => [target, callData])
     const data = await multiContract.tryAggregate(requireSuccess, multiCall)
-
     return multiCalls.reduce(
       (items, { name, ifs, methods }, i) => ({
         ...items,
@@ -466,7 +465,8 @@ export async function singleContractMultiCallRequest(
   }
 }
 
-export const resConverter = (data: { [key: string]: string }) =>
-  Object.keys(data).length === 1
-    ? data.toString()
+export const resConverter = (data: { [key: string]: string }) => {
+  return Object.keys(data).length === 1
+    ? data?.toString()
     : Object.keys(data).reduce((res, key) => key.length > 1 && { ...res, [key]: data[key].toString() }, {})
+}
