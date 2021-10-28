@@ -1,4 +1,4 @@
-import { BalanceInput, MainComp, MainFlex, Skeleton, useWindowSize } from '@smartworld-libs/uikit'
+import { BalanceInput, ReverseFlex, MainComp, Skeleton, useWindowSize } from '@smartworld-libs/uikit'
 import { useState, useEffect } from 'react'
 import { useBankDollars, useBankSatoshi } from 'state/bank/hooks'
 import { useInvestTokenBalances } from 'state/wallet/hooks'
@@ -8,7 +8,6 @@ import DepositInfo from './DepositInfo'
 export const tokenNames = ['STTS', 'BNB', 'BTC']
 
 export const MainDepositSection = () => {
-  const { flexSize, isMobile, isTablet } = useWindowSize()
   const dollar = useBankDollars()
   const prices = useBankSatoshi()
   const tokens = useInvestTokenBalances()
@@ -83,11 +82,11 @@ export const MainDepositSection = () => {
   }
 
   return (
-    <MainFlex {...{ flex: 6, md: 12, sm: 12, xs: 12 }}>
+    <ReverseFlex>
       <MainComp
         tip="Token Selection"
-        flex={3}
-        flexDirection={isMobile ? 'row' : 'column'}
+        flex={6}
+        flexDirection="row"
         justifyContent="space-around"
         alignItems="center"
         demo={[0, 1, 2].map((i) => (
@@ -100,12 +99,12 @@ export const MainDepositSection = () => {
       </MainComp>
       <MainComp
         tip="Balance Input"
-        flex={6}
-        flexDirection={isMobile ? 'row' : 'column'}
+        flex={8}
+        flexDirection="row"
         justifyContent="space-around"
         alignItems="center"
         tipSize={3}
-        demo={<Skeleton size={isMobile ? flexSize * 3.5 : isTablet ? flexSize * 2.5 : flexSize * 2} />}
+        demo={<Skeleton size={200} />}
       >
         <BalanceInput
           value={values[editingUnit]}
@@ -115,7 +114,7 @@ export const MainDepositSection = () => {
           currencyValue={currencyValues}
           currencyUnit={conversionUnit}
           placeholder={balanceValues()}
-          size={isMobile ? flexSize * 4 : isTablet ? flexSize * 3 : flexSize * 2}
+          size={200}
           borderColor="transparent"
           progressColor={balanceValues() === '0' ? 'transparent' : undefined}
           borderSize={2}
@@ -126,7 +125,7 @@ export const MainDepositSection = () => {
       </MainComp>
       <MainComp
         tip="Long Press Button"
-        flex={3}
+        flex={6}
         justifyContent="space-around"
         alignItems="center"
         tipSize={3}
@@ -134,7 +133,7 @@ export const MainDepositSection = () => {
       >
         <DepositInfo token={token} value={Number(values[token] ?? 0)} prices={prices} />
       </MainComp>
-    </MainFlex>
+    </ReverseFlex>
   )
 }
 

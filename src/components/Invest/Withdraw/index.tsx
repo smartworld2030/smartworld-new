@@ -1,18 +1,8 @@
 import { useUserInvestDetails } from 'state/invest/hooks'
-import {
-  WithdrawCircle,
-  Flex,
-  Text,
-  TooltipText,
-  MainFlex,
-  Skeleton,
-  MainComp,
-  useWindowSize,
-} from '@smartworld-libs/uikit'
+import { WithdrawCircle, Flex, Text, TooltipText, Skeleton, MainComp, ReverseFlex } from '@smartworld-libs/uikit'
 import { useBankDollars } from 'state/bank/hooks'
 
 const MainWithdrawSection = () => {
-  const { flexSize, isMobile, isTablet } = useWindowSize()
   const {
     calculateInterest: { referral, hourly },
     users: { latestWithdraw },
@@ -33,14 +23,14 @@ const MainWithdrawSection = () => {
     : '0.00'
 
   return (
-    <MainFlex {...{ flex: 3, md: 6, sm: 6, xs: 6 }}>
+    <ReverseFlex>
       <MainComp
         tip="Withdraw Circle"
-        flex={12}
+        flex={8}
         justifyContent="space-around"
         alignItems="center"
         tipSize={3}
-        demo={<Skeleton size={isMobile ? flexSize * 3.5 : isTablet ? flexSize * 2.5 : flexSize * 2} />}
+        demo={<Skeleton size={200} />}
       >
         <WithdrawCircle
           progressSize={5}
@@ -59,11 +49,11 @@ const MainWithdrawSection = () => {
               <TooltipText fontSize="8px">REFERRAL</TooltipText>
             </>
           }
-          size={isMobile ? flexSize * 4 : isTablet ? flexSize * 3 : flexSize * 2}
+          size={200}
           onClick={+referral + +hourly > 0 ? () => console.log('withdraw') : undefined}
         />
       </MainComp>
-    </MainFlex>
+    </ReverseFlex>
   )
 }
 

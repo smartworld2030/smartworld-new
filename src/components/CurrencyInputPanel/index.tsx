@@ -1,10 +1,11 @@
-import { Currency, Pair } from '@pancakeswap/sdk'
+import { Currency, CurrencyAmount, Pair } from '@pancakeswap/sdk'
 import { ChevronDownIcon, Text, useModal, Flex, BalanceInput } from '@smartworld-libs/uikit'
 import { useTranslation } from 'contexts/Localization'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import { CurrencyLogo, DoubleCurrencyLogo } from '../Logo'
+import useBUSDPrice from 'hooks/useBUSDPrice'
 
 interface CurrencyInputPanelProps {
   value: string
@@ -12,35 +13,37 @@ interface CurrencyInputPanelProps {
   onMax?: () => void
   showMaxButton?: boolean
   label?: string
+  maxTokenCanBuy?: CurrencyAmount
   onCurrencySelect: (currency: Currency) => void
   currency?: Currency | null
   disableCurrencySelect?: boolean
-  disabledKnob?: boolean
   hideBalance?: boolean
   pair?: Pair | null
   hideInput?: boolean
   otherCurrency?: Currency | null
   id: string
+  size: number
   showCommonBases?: boolean
 }
 export default function CurrencyInputPanel({
   value,
   onUserInput,
-  showMaxButton = false,
+  showMaxButton = true,
   onCurrencySelect,
   currency,
   disableCurrencySelect = false,
-  disabledKnob = false,
   pair = null, // used for double token logo
   hideInput = false,
   otherCurrency,
   id,
+  size,
+  label,
+  maxTokenCanBuy,
   showCommonBases,
 }: CurrencyInputPanelProps) {
   const { account } = useActiveWeb3React()
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
   const { t } = useTranslation()
-
   const [onPresentCurrencyModal] = useModal(
     <CurrencySearchModal
       onCurrencySelect={onCurrencySelect}
@@ -50,20 +53,37 @@ export default function CurrencyInputPanel({
     />,
   )
 
+  const tokenPrice = useBUSDPrice(currency)?.toSignificant(3)
+
+  const balanceValues = (val: string) => {
+    const inputAsFloat = parseFloat(val)
+    return Number.isNaN(inputAsFloat) ? 0 : inputAsFloat * +tokenPrice
+  }
+
+  const currencyValues =
+    +value && !Number.isNaN(value)
+      ? '~' +
+        balanceValues(value).toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })
+      : '0.00'
+
   return (
     <BalanceInput
-      id={id}
-      maxValue={showMaxButton && selectedCurrencyBalance?.toSignificant(6)}
       value={value}
-      onUserInput={(val) => {
-        onUserInput(val)
-      }}
-      size={disabledKnob ? 120 : 130}
+      currencyValue={currencyValues}
+      currencyUnit="USD"
+      id={id}
+      maxValue={
+        showMaxButton && label === 'OUTPUT'
+          ? maxTokenCanBuy?.toSignificant(6)
+          : selectedCurrencyBalance?.toSignificant(6)
+      }
+      onUserInput={onUserInput}
+      size={size > 200 ? 200 : size}
       margin={'auto'}
-      disabledKnob={disabledKnob}
       disabled={hideInput}
-      borderSize={3}
-      progressSize={3}
       logo={currency ? <CurrencyLogo currency={currency} size="12px" /> : <CurrencyLogo size="12px" />}
       onLogoClick={() => {
         if (!disableCurrencySelect) {
@@ -84,7 +104,7 @@ export default function CurrencyInputPanel({
               {pair?.token0.symbol}:{pair?.token1.symbol}
             </Text>
           ) : (
-            <Text id="pair">
+            <Text id="pair" fontSize={size > 200 ? 15 : size / 12}>
               {(currency && currency.symbol && currency.symbol.length > 20
                 ? `${currency.symbol.slice(0, 4)}...${currency.symbol.slice(
                     currency.symbol.length - 5,

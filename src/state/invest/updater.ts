@@ -54,7 +54,7 @@ export default function Updater(): number {
 
   useEffect(() => {
     if (!latestBlockNumber || !windowVisible) return
-    let cancelation = false
+    cancelation = false
     async function multiCallRequest() {
       const results = await multiCallMultipleData(multiContract, calls, { requireSuccess: false })
       const length = Number(results?.userDepositNumber?.toString())
@@ -103,7 +103,7 @@ export default function Updater(): number {
   const states = useDebounce(compiledStates, 500)
 
   useEffect(() => {
-    if (!chainId) return
+    if (!chainId && cancelation) return
     dispatch(
       updateInvestStates({
         chainId,

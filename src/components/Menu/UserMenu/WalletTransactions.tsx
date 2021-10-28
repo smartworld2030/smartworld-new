@@ -5,7 +5,7 @@ import { useAllTransactions } from 'state/transactions/hooks'
 import { useTranslation } from 'contexts/Localization'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { clearAllTransactions } from 'state/transactions/actions'
-import { orderBy } from 'lodash'
+import orderBy from 'lodash/orderBy'
 import TransactionRow from './TransactionRow'
 
 const WalletTransactions: React.FC = () => {

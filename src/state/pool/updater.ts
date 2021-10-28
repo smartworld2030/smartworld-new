@@ -54,7 +54,7 @@ export default function Updater(): null {
 
   useEffect(() => {
     if (!latestBlockNumber || !windowVisible) return
-    let cancelation = false
+    cancelation = false
     async function multiCallRequest() {
       const results = await multiCallMultipleData(multiContract, calls, { requireSuccess: false })
       const length = Number(results?.userDepositNumber?.toString())

@@ -7,10 +7,9 @@ import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useUserInvestDetails } from 'state/invest/hooks'
 import useToast from 'hooks/useToast'
 import useTheme from 'hooks/useTheme'
-import { MainComp, MainFlex, Skeleton, useWindowSize } from '@smartworld-libs/uikit'
+import { ReverseFlex, MainComp, Skeleton, useWindowSize } from '@smartworld-libs/uikit'
 
 export const MainDetailSection = () => {
-  const { flexSize, isMobile, isTablet } = useWindowSize()
   const { account } = useActiveWeb3React()
   const {
     userBalances: { satoshi },
@@ -34,10 +33,10 @@ export const MainDetailSection = () => {
   }
 
   return (
-    <MainFlex {...{ flex: 3, md: 6, sm: 4, xs: 4 }}>
+    <ReverseFlex>
       <MainComp
         tip="Long Press Button"
-        flex={12}
+        flex={6}
         justifyContent="space-around"
         alignItems="center"
         tipSize={3}
@@ -45,7 +44,7 @@ export const MainDetailSection = () => {
       >
         {done ? (
           <QRCode
-            size={isMobile ? flexSize * 4 : isTablet ? flexSize * 3 : flexSize * 2}
+            size={200}
             value={link}
             bgColor={colors.background}
             fgColor="white"
@@ -56,7 +55,7 @@ export const MainDetailSection = () => {
           <ReferralButton width={90} onClick={copyHandler} disable={satoshi === '0'} />
         )}
       </MainComp>
-    </MainFlex>
+    </ReverseFlex>
   )
 }
 

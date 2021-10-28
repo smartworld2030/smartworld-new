@@ -5,22 +5,22 @@ const config: (t: ContextApi['t']) => MenuEntry[] = (t) => [
   {
     label: t('Home'),
     icon: 'HomeIcon',
-    href: '/',
+    path: ['/'],
   },
   {
     label: t('Trade'),
     icon: 'TradeIcon',
-    href: '/swap',
+    path: ['/swap'],
   },
   {
     label: t('Pools'),
     icon: 'PoolIcon',
-    href: '/pools',
+    path: ['/pools'],
   },
   {
     label: t('Info'),
     icon: 'InfoIcon',
-    href: 'https://pancakeswap.info',
+    path: ['https://pancakeswap.info'],
   },
 ]
 

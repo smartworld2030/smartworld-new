@@ -1,24 +1,21 @@
-import { BrowserRouter as Router, Switch } from 'react-router-dom'
+import { BrowserRouter as Router } from 'react-router-dom'
 import Globe from 'components/Globe/Globe'
-import { Header } from 'components/Header'
 import AppRouter from 'router'
 import { useWindowSize } from 'hooks/useWindowsSize'
-import { Flex, Spinner } from '@smartworld-libs/uikit'
+import { RelativeFlex } from '@smartworld-libs/uikit'
+import { useState } from 'react'
 
 const App = () => {
-  const { height, width } = useWindowSize()
-  const isMobile = width > 768 ? false : true
-  const globeHeight = height * 0.6
-  return height && width ? (
+  const [globeHeight, setGlobeHeight] = useState(0)
+  const { width } = useWindowSize()
+
+  return (
     <Router>
-      {/* <Header width={width} />
-      <Globe height={globeHeight} width={width} /> */}
-      <AppRouter isMobile={isMobile} width={width} height={height - globeHeight} />
+      <RelativeFlex justifyContent="center" alignContent="center" flexDirection="column">
+        <AppRouter globeHeight={setGlobeHeight} />
+        {globeHeight && <Globe height={globeHeight} width={width} />}
+      </RelativeFlex>
     </Router>
-  ) : (
-    <Flex width="100vw" height="100vh" justifyContent="center" alignItems="center">
-      <Spinner />
-    </Flex>
   )
 }
 

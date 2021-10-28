@@ -1,25 +1,25 @@
-import styled from "styled-components";
-import React, { useState } from "react";
-import { sizeCalculator } from "./Links";
-import { HeadCircle } from "./HeadCircle";
-import { useLocation } from "react-router-dom";
-import ChainPriceFeed from "./ChainPriceFeed";
+import styled from 'styled-components'
+import React, { useState } from 'react'
+import { sizeCalculator } from './Links'
+import { HeadCircle } from './HeadCircle'
+import { useLocation } from 'react-router-dom'
+import ChainPriceFeed from './ChainPriceFeed'
 
 const StyledSvg = styled.svg`
   position: absolute;
-  top: 0;
+  bottom: 0;
   left: 0;
-  z-index: 10;
-`;
+  z-index: 2;
+`
 
 interface HeaderProps {
-  width: number;
+  width: number
 }
 
 export const Header: React.FC<HeaderProps> = ({ width }) => {
-  const { half, quarter, height, linkArray } = sizeCalculator(width);
-  const [, setActive] = useState("/invest");
-  const { pathname } = useLocation();
+  const { half, quarter, height, linkArray } = sizeCalculator(width)
+  const [, setActive] = useState('/invest')
+  const { pathname } = useLocation()
 
   return (
     <StyledSvg height={height + 10} width={width}>
@@ -41,21 +41,14 @@ export const Header: React.FC<HeaderProps> = ({ width }) => {
         stroke="rgb(150, 150, 150)"
         strokeDasharray="1 6"
         fill="rgb(0, 0, 0,0.0)"
-        d={`M0,0 C${half - quarter},${height} ${
-          half + quarter
-        },${height} ${width},0`}
+        d={`M0,${height} C${half - quarter},0 ${half + quarter},0 ${width},${height}`}
       />
       {linkArray.map((item, index) => (
-        <HeadCircle
-          {...item}
-          key={index}
-          active={item.link === pathname}
-          onClick={() => setActive(item.link)}
-        />
+        <HeadCircle {...item} key={index} active={item.link === pathname} onClick={() => setActive(item.link)} />
       ))}
-      <foreignObject width="100%" height="10%" y={height * 0.05}>
+      <foreignObject width="100%" height="10%" y={height - 10}>
         <ChainPriceFeed />
       </foreignObject>
     </StyledSvg>
-  );
-};
+  )
+}

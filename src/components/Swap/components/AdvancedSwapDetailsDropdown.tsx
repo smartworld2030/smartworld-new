@@ -7,7 +7,7 @@ export const AdvancedDetails = styled.div`
     padding-top: 16px;
     padding-bottom: 8px;
   }
-  width: 100%;
+  width: 300px;
   height: 80%;
   max-width: 400px;
   border-radius: 2px;

@@ -1,13 +1,5 @@
 import { parseUnits } from '@ethersproject/units'
-import {
-  Currency,
-  CurrencyAmount,
-  ETHER,
-  JSBI,
-  Token,
-  TokenAmount,
-  Trade,
-} from '@pancakeswap/sdk'
+import { Currency, CurrencyAmount, ETHER, JSBI, Percent, Token, TokenAmount, Trade } from '@pancakeswap/sdk'
 import { ParsedQs } from 'qs'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -21,14 +13,7 @@ import { isAddress } from 'utils'
 import { computeSlippageAdjustedAmounts } from 'utils/prices'
 import { AppDispatch, AppState } from '../index'
 import { useCurrencyBalances } from '../wallet/hooks'
-import {
-  Field,
-  replaceSwapState,
-  selectCurrency,
-  setRecipient,
-  switchCurrencies,
-  typeInput,
-} from './actions'
+import { Field, replaceSwapState, selectCurrency, setRecipient, switchCurrencies, typeInput } from './actions'
 import { SwapState } from './reducer'
 import { useUserSlippageTolerance } from '../user/hooks'
 
@@ -49,16 +34,11 @@ export function useSwapActionHandlers(): SwapActions {
       dispatch(
         selectCurrency({
           field,
-          currencyId:
-            currency instanceof Token
-              ? currency.address
-              : currency === ETHER
-              ? 'BNB'
-              : '',
-        })
+          currencyId: currency instanceof Token ? currency.address : currency === ETHER ? 'BNB' : '',
+        }),
       )
     },
-    [dispatch]
+    [dispatch],
   )
 
   const onSwitchTokens = useCallback(() => {
@@ -69,14 +49,14 @@ export function useSwapActionHandlers(): SwapActions {
     (field: Field, typedValue: string) => {
       dispatch(typeInput({ field, typedValue }))
     },
-    [dispatch]
+    [dispatch],
   )
 
   const onChangeRecipient = useCallback(
     (recipient: string | null) => {
       dispatch(setRecipient({ recipient }))
     },
-    [dispatch]
+    [dispatch],
   )
 
   return {
@@ -88,10 +68,7 @@ export function useSwapActionHandlers(): SwapActions {
 }
 
 // try to parse a user entered amount for a given token
-export function tryParseAmount(
-  value?: string,
-  currency?: Currency
-): CurrencyAmount | undefined {
+export function tryParseAmount(value?: string, currency?: Currency): CurrencyAmount | undefined {
   if (!value || !currency) {
     return undefined
   }
@@ -124,9 +101,7 @@ const BAD_RECIPIENT_ADDRESSES: string[] = [
 function involvesAddress(trade: Trade, checksummedAddress: string): boolean {
   return (
     trade.route.path.some((token) => token.address === checksummedAddress) ||
-    trade.route.pairs.some(
-      (pair) => pair.liquidityToken.address === checksummedAddress
-    )
+    trade.route.pairs.some((pair) => pair.liquidityToken.address === checksummedAddress)
   )
 }
 
@@ -136,6 +111,7 @@ export function useDerivedSwapInfo(): {
   currencyBalances: { [field in Field]?: CurrencyAmount }
   parsedAmount: CurrencyAmount | undefined
   v2Trade: Trade | undefined
+  maxTokenCanBuy: CurrencyAmount | undefined
   inputError?: string
 } {
   const { account } = useActiveWeb3React()
@@ -151,8 +127,7 @@ export function useDerivedSwapInfo(): {
   const inputCurrency = useCurrency(inputCurrencyId)
   const outputCurrency = useCurrency(outputCurrencyId)
   const recipientLookup = useENS(recipient ?? undefined)
-  const to: string | null =
-    (recipient === null ? account : recipientLookup.address) ?? null
+  const to: string | null = (recipient === null ? account : recipientLookup.address) ?? null
 
   const relevantTokenBalances = useCurrencyBalances(account ?? undefined, [
     inputCurrency ?? undefined,
@@ -160,18 +135,10 @@ export function useDerivedSwapInfo(): {
   ])
 
   const isExactIn: boolean = independentField === Field.INPUT
-  const parsedAmount = tryParseAmount(
-    typedValue,
-    (isExactIn ? inputCurrency : outputCurrency) ?? undefined
-  )
-  const bestTradeExactIn = useTradeExactIn(
-    isExactIn ? parsedAmount : undefined,
-    outputCurrency ?? undefined
-  )
-  const bestTradeExactOut = useTradeExactOut(
-    inputCurrency ?? undefined,
-    !isExactIn ? parsedAmount : undefined
-  )
+  const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
+
+  const bestTradeExactIn = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
+  const bestTradeExactOut = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined)
 
   const v2Trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
 
@@ -184,6 +151,8 @@ export function useDerivedSwapInfo(): {
     [Field.INPUT]: inputCurrency ?? undefined,
     [Field.OUTPUT]: outputCurrency ?? undefined,
   }
+
+  const [allowedSlippage] = useUserSlippageTolerance()
 
   let inputError: string | undefined
   if (!account) {
@@ -209,29 +178,29 @@ export function useDerivedSwapInfo(): {
     inputError = inputError ?? t('Invalid recipient')
   }
 
-  const [allowedSlippage] = useUserSlippageTolerance()
-
-  const slippageAdjustedAmounts =
-    v2Trade &&
-    allowedSlippage &&
-    computeSlippageAdjustedAmounts(v2Trade, allowedSlippage)
+  const slippageAdjustedAmounts = v2Trade && allowedSlippage && computeSlippageAdjustedAmounts(v2Trade, allowedSlippage)
 
   // compare input balance to max input based on version
   const [balanceIn, amountIn] = [
     currencyBalances[Field.INPUT],
     slippageAdjustedAmounts ? slippageAdjustedAmounts[Field.INPUT] : null,
   ]
-
   if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
     inputError = t('Insufficient %symbol% balance', {
       symbol: amountIn.currency.symbol,
     })
   }
 
+  const maxTokens = useTradeExactIn(currencyBalances[Field.INPUT], outputCurrency ?? undefined)
+
+  const maxTokenCanBuy =
+    maxTokens && allowedSlippage && computeSlippageAdjustedAmounts(maxTokens, allowedSlippage)?.OUTPUT
+
   return {
     currencies,
     currencyBalances,
     parsedAmount,
+    maxTokenCanBuy,
     v2Trade: v2Trade ?? undefined,
     inputError,
   }
@@ -249,15 +218,11 @@ function parseCurrencyFromURLParameter(urlParam: any): string {
 
 function parseTokenAmountURLParameter(urlParam: any): string {
   // eslint-disable-next-line no-restricted-globals
-  return typeof urlParam === 'string' && !isNaN(parseFloat(urlParam))
-    ? urlParam
-    : ''
+  return typeof urlParam === 'string' && !isNaN(parseFloat(urlParam)) ? urlParam : ''
 }
 
 function parseIndependentFieldURLParameter(urlParam: any): Field {
-  return typeof urlParam === 'string' && urlParam.toLowerCase() === 'output'
-    ? Field.OUTPUT
-    : Field.INPUT
+  return typeof urlParam === 'string' && urlParam.toLowerCase() === 'output' ? Field.OUTPUT : Field.INPUT
 }
 
 const ENS_NAME_REGEX = /^[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)?$/
@@ -327,7 +292,7 @@ export function useDefaultsFromURLSearch(): DefaultUrls {
         inputCurrencyId: parsed[Field.INPUT].currencyId,
         outputCurrencyId: parsed[Field.OUTPUT].currencyId,
         recipient: null,
-      })
+      }),
     )
     setResult({
       inputCurrencyId: parsed[Field.INPUT].currencyId,

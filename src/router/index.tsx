@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { lazy, useMemo, useRef, useState } from 'react'
 import { usePollBlockNumber } from 'state/block/hooks'
 import useEagerConnect from 'hooks/useEagerConnect'
 import { Switch } from 'react-router-dom'
@@ -12,34 +12,32 @@ import GlobalStyle from 'style/Global'
 import {
   BoxProps,
   Language,
-  Modal,
+  MainSection,
   CogIcon,
   IconButton,
   ThemeSwitcher,
   Toggle,
   NoProfileAvatarIcon,
-  Flex,
 } from '@smartworld-libs/uikit'
 import SuspenseWithChunkError from 'components/SuspenseWithChunkError'
 import PageLoader from 'components/Loader/PageLoader'
 // import RedirectOldRemoveLiquidityPathStructure from "components/Swap/RemoveLiquidity/redirects";
 import { RedirectPathToSwapOnly, RedirectToSwap } from 'components/Swap/redirects'
-import { AnimatedTipFlex, MainSection, LogoIcon, SwapIcon, Spinner } from '@smartworld-libs/uikit'
-
+import { AnimatedTipFlex, LogoIcon, SwapIcon, Spinner } from '@smartworld-libs/uikit'
+import { debounce } from 'lodash'
 import { InjectedProps } from '@smartworld-libs/uikit/dist/widgets/Modal/types'
 import useTheme from 'hooks/useTheme'
-import MainInvestment from 'components/Invest'
 import MainPool from 'components/Pool'
-import MainSwap from 'components/Swap'
 import WalletModal, { WalletView } from 'components/Menu/UserMenu/WalletModal'
 import { useERC20 } from 'hooks/useContract'
 import ConnectWalletButton from 'components/ConnectWalletButton'
+import SettingsModal from 'components/Menu/GlobalSettings/SettingsModal'
 // const AddLiquidity = lazy(() => import("components/Swap/AddLiquidity"));
 // const Liquidity = lazy(() => import("components/Swap/Pool"));
 // const PoolFinder = lazy(() => import("components/Swap/PoolFinder"));
 // const RemoveLiquidity = lazy(() => import("components/Swap/RemoveLiquidity"));
-// const MainInvestment = lazy(() => import('components/Invest'))
-// const Swap = lazy(() => import('components/Swap'))
+const Investment = lazy(() => import('components/Invest'))
+const Swap = lazy(() => import('components/Swap'))
 // const Info = lazy(() => import('components/Info'))
 // const MainPool = lazy(() => import('components/Pool'))
 // const STB = lazy(() => import('components/STB'))
@@ -51,53 +49,73 @@ const langs: Language[] = [...Array(20)].map((_, i) => ({
 }))
 
 interface IProps {
-  isMobile: boolean
-  height: number
-  width: number
+  globeHeight: (arg0: number) => void
 }
 
 type AppRouterProps = IProps
 
-export const AppRouter: React.FC<AppRouterProps> = ({ width }) => {
+export const AppRouter: React.FC<AppRouterProps> = ({ globeHeight }) => {
   usePollBlockNumber()
   useEagerConnect()
+  const [height, setHeight] = useState(0)
+  const timer = useRef<NodeJS.Timeout>(null)
+
+  const getHeight = (ref: HTMLDivElement) => {
+    if (ref) {
+      const { height } = ref.getBoundingClientRect()
+      clearTimeout(timer.current)
+      timer.current = setTimeout(() => {
+        console.log(height)
+        setHeight(height)
+        globeHeight(height + 600)
+      }, 300)
+    }
+  }
 
   const Titles = useMemo(
-    () => [
-      {
-        label: 'INVESTMENT',
-        href: '/invest',
-        icon: <LogoIcon />,
-      },
-      { label: 'INFORMATION', href: '/info', icon: <LogoIcon /> },
-      {
-        label: 'POOL',
-        href: '/pool',
-        icon: <LogoIcon />,
-      },
-      { label: 'SWAP', href: '/swap', icon: <LogoIcon /> },
-      { label: 'STB', href: '/stb', icon: <LogoIcon /> },
-    ],
+    () => ({
+      links: [
+        {
+          label: 'INVESTMENT',
+          path: ['/invest'],
+          icon: <LogoIcon />,
+        },
+        { label: 'INFORMATION', path: ['/info'], icon: <LogoIcon /> },
+        {
+          label: 'POOL',
+          path: ['/pool'],
+          icon: <LogoIcon />,
+        },
+        { label: 'SWAP', path: ['/swap'], icon: <LogoIcon /> },
+        { label: 'STB', path: ['/stb'], icon: <LogoIcon /> },
+      ],
+      default: '/invest',
+    }),
     [],
   )
+
   return (
-    <Flex width="100%" height="100%" flexDirection="column">
+    <div
+      style={{ position: 'absolute', zIndex: 10, top: 0, width: '100vw', height, background: 'rgb(255 255 255 / 13%)' }}
+    >
       <GlobalStyle />
       <SuspenseWithChunkError fallback={<PageLoader />}>
         <Switch>
           <MainSection
-            initialValue={{ height: 300, flexSize: 10, screen: 'xl', width: 1200 }}
-            links={Titles}
-            leftIcon={({ checked, onChange }) =>
+            mainBackground="transparent"
+            menuBackground="transparent"
+            refFunc={getHeight}
+            list={Titles}
+            rightIcon={({ checked, onChange }) =>
               checked ? <NoProfileAvatarIcon onClick={onChange} /> : <NoProfileAvatarIcon onClick={onChange} />
             }
-            rightIcon={({ checked, onChange }) =>
+            leftIcon={({ checked, onChange }) =>
               checked ? <CogIcon onClick={onChange} /> : <CogIcon onClick={onChange} />
             }
             right={useMemo(
-              () => ({ isMobile, isTablet, toggle: { showRight }, responsiveSize }) => (
+              () => ({ toggle: { showRight }, responsiveSize }) => (
                 <AnimatedTipFlex
-                  {...responsiveSize(isMobile ? 5.5 : isTablet ? 6 : 3, showRight)}
+                  {...responsiveSize(12, showRight)}
                   flexDirection="column"
                   justifyContent="space-around"
                 >
@@ -107,21 +125,17 @@ export const AppRouter: React.FC<AppRouterProps> = ({ width }) => {
               [],
             )}
             left={useMemo(
-              () => ({ isMobile, isTablet, toggle: { showLeft }, responsiveSize, tipChanger }) => (
-                <AnimatedTipFlex
-                  {...responsiveSize(isMobile ? 5.5 : isTablet ? 6 : 3, showLeft)}
-                  flexDirection={isMobile ? 'row' : 'column'}
-                  justifyContent="space-around"
-                >
+              () => ({ toggle: { showLeft }, responsiveSize, tipChanger }) => (
+                <AnimatedTipFlex {...responsiveSize(15, showLeft)} flexDirection="column" justifyContent="space-around">
                   <GlobalMenuModal title="Setting" toggleHandler={tipChanger} />
                 </AnimatedTipFlex>
               ),
               [],
             )}
           >
-            <MainInvestment exact strict path={['/invest', '/investment']} />
+            <Route exact strict path={['/invest', '/investment']} component={Investment} />
             <MainPool exact strict path="/pool" />
-            <MainSwap exact strict path="/swap" />
+            <Route exact strict path="/swap" component={Swap} />
           </MainSection>
           <Route exact path={['/', '']}>
             <Redirect to="/invest" />
@@ -186,12 +200,12 @@ export const AppRouter: React.FC<AppRouterProps> = ({ width }) => {
                       path="/remove/:currencyIdA/:currencyIdB"
                       component={RemoveLiquidity}
                     /> */}
-        {/* <Route path="/">
-                <Redirect to="/invest" />
-              </Route> */}
+        <Route exact path="/">
+          <Redirect to="/invest" />
+        </Route>
         {/* </Switch> */}
       </SuspenseWithChunkError>
-    </Flex>
+    </div>
   )
 }
 
@@ -211,6 +225,7 @@ export const GlobalMenuModal: React.FC<ModalProps> = ({ title, toggleHandler, on
   const { isDark, toggleTheme } = useTheme()
   return (
     <>
+      <SettingsModal />
       <ThemeSwitcher isDark={isDark} toggleTheme={toggleTheme} />
       <Toggle onChange={() => toggleHandler('showTip')} />
     </>
