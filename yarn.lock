@@ -3181,10 +3181,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@smartworld-libs/uikit@^0.53.6":
-  version "0.53.6"
-  resolved "https://registry.yarnpkg.com/@smartworld-libs/uikit/-/uikit-0.53.6.tgz#d6bb8cdc22a015b2c5406d34b5ca82daf6f159b8"
-  integrity sha512-8obAKmyvvXp5zmRS9WqM/OCw/s8np/Ak51MDDIBTm+iu29aKUMlcM/tlsUz3nvZF3r1DtoozXlu24W2EV7SmiQ==
+"@smartworld-libs/uikit@^0.55.0":
+  version "0.55.0"
+  resolved "https://registry.yarnpkg.com/@smartworld-libs/uikit/-/uikit-0.55.0.tgz#bbba9335c221011c4ad92eb5d23d4630c924388c"
+  integrity sha512-LZX1zcllya3iPzTarTq4liEgmQdzpcpJk41qa9ZnYqg0/4eG3rYPiUg/4NcfK7xSO2kqcs6lgQKAWF+Dhc9oTQ==
   dependencies:
     "@popperjs/core" "^2.9.2"
     "@types/lodash" "^4.14.168"

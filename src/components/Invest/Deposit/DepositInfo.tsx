@@ -15,11 +15,7 @@ const DepositInfo: React.FC<DepositInfoProps> = ({ token, prices, value }) => {
     // }
   }
 
-  return (
-    <Flex alignItems="center" justifyContent="center" width="100%" height="100%">
-      <DepositButton onClick={depositHandler} done={false} loading={false} />
-    </Flex>
-  )
+  return <DepositButton onClick={depositHandler} done={false} loading={false} />
 }
 
 export default DepositInfo

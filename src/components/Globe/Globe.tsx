@@ -29,8 +29,8 @@ const ReactGlobe: React.FC<GlobeProps> = ({ height, width }) => {
     if (globeEl?.current) {
       globeEl.current.controls().autoRotate = true
       globeEl.current.controls().autoRotateSpeed = 0.3
-      globeEl.current.pointOfView({ altitude: 10 })
-      globeEl.current.camera().setViewOffset(100, 100, 0, -29, 100, 100)
+      globeEl.current.pointOfView({ altitude: height / 60 })
+      globeEl.current.camera().setViewOffset(100, 100, 0, -(height / 20), 100, 100)
     }
   }, [])
 

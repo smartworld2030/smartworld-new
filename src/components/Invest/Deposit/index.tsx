@@ -7,7 +7,7 @@ import DepositInfo from './DepositInfo'
 
 export const tokenNames = ['STTS', 'BNB', 'BTC']
 
-export const MainDepositSection = () => {
+export const MainDepositSection = ({ toggle }) => {
   const dollar = useBankDollars()
   const prices = useBankSatoshi()
   const tokens = useInvestTokenBalances()
@@ -85,7 +85,7 @@ export const MainDepositSection = () => {
     <ReverseFlex>
       <MainComp
         tip="Token Selection"
-        flex={6}
+        flex={toggle ? 7 : 4}
         flexDirection="row"
         justifyContent="space-around"
         alignItems="center"
@@ -99,11 +99,10 @@ export const MainDepositSection = () => {
       </MainComp>
       <MainComp
         tip="Balance Input"
-        flex={8}
+        flex={toggle ? 12 : 7}
         flexDirection="row"
         justifyContent="space-around"
         alignItems="center"
-        tipSize={3}
         demo={<Skeleton size={200} />}
       >
         <BalanceInput
@@ -115,17 +114,14 @@ export const MainDepositSection = () => {
           currencyUnit={conversionUnit}
           placeholder={balanceValues()}
           size={200}
-          borderColor="transparent"
           progressColor={balanceValues() === '0' ? 'transparent' : undefined}
-          borderSize={2}
-          knobSize={12}
           disabled={balanceValues() === '0'}
           switchEditingUnits={switchEditingUnits}
         />
       </MainComp>
       <MainComp
         tip="Long Press Button"
-        flex={6}
+        flex={toggle ? 8 : 5}
         justifyContent="space-around"
         alignItems="center"
         tipSize={3}

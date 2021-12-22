@@ -26,7 +26,6 @@ const WalletInfo: React.FC<WalletInfoProps> = ({ hasLowBnbBalance, onDismiss }) 
   const { t } = useTranslation()
   const { account } = useWeb3React()
   const { balance } = useGetBnbBalance()
-  const { balance: sttBalance } = useTokenBalance(getSttAddress())
   const { balance: sttsBalance } = useTokenBalance(getSttsAddress())
   const { logout } = useAuth()
 
@@ -53,10 +52,6 @@ const WalletInfo: React.FC<WalletInfoProps> = ({ hasLowBnbBalance, onDismiss }) 
       <Flex alignItems="center" justifyContent="space-between">
         <Text color="textSubtle">{t('BNB Balance')}</Text>
         <Text>{getFullDisplayBalance(balance, 18, 6)}</Text>
-      </Flex>
-      <Flex alignItems="center" justifyContent="space-between">
-        <Text color="textSubtle">{t('STT Balance')}</Text>
-        <Text>{getFullDisplayBalance(sttBalance, 8, 2)}</Text>
       </Flex>
       <Flex alignItems="center" justifyContent="space-between" mb="24px">
         <Text color="textSubtle">{t('STTS Balance')}</Text>

@@ -1,4 +1,4 @@
-import { Button } from '@smartworld-libs/uikit'
+import { IconButton } from '@smartworld-libs/uikit'
 import useTheme from 'hooks/useTheme'
 import styled, { keyframes } from 'styled-components'
 
@@ -31,7 +31,8 @@ const rotatingY = keyframes`
   }
 `
 
-const AnimatedRefIcon = styled(DepositIcon)`
+const AnimatedRefIcon = styled(DepositIcon)<{ width: number }>`
+  width: ${({ width }) => width}px;
   animation-name: ${rotatingY};
   animation-duration: 5s;
   animation-timing-function: ease-in;
@@ -52,13 +53,21 @@ export const DepositButton: React.FC<DepositButtonProps> = ({ done, loading, dis
   } = useTheme()
 
   return (
-    <Button shape="circle" scale="ml" variant="secondary" onClick={disable ? undefined : onClick}>
-      <AnimatedRefIcon
-        done={done}
-        loading={loading}
-        opacity={loading || done ? '1' : disable ? '1' : '0.6'}
-        fill={disable ? colors.textSubtle : colors.primary}
-      />
-    </Button>
+    <IconButton
+      scale="ml"
+      shape="circle"
+      onClick={disable ? undefined : onClick}
+      color={disable ? colors.textSubtle : colors.primary}
+      blur={false}
+      icon={(w) => (
+        <AnimatedRefIcon
+          width={w}
+          done={done}
+          loading={loading}
+          opacity={loading || done ? '1' : disable ? '1' : '0.6'}
+          fill={disable ? colors.textSubtle : colors.primary}
+        />
+      )}
+    />
   )
 }

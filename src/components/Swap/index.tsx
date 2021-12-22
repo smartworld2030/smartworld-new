@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { CurrencyAmount, JSBI, Token, Trade } from '@pancakeswap/sdk'
 import {
   Button,
-  LongPressButton,
   Text,
   ArrowDownIcon,
   useModal,
@@ -11,10 +10,11 @@ import {
   useWindowSize,
   MainComp,
   Skeleton,
+  LongPressButton,
 } from '@smartworld-libs/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/UnsupportedCurrencyFooter'
-import { RouteProps, useHistory } from 'react-router'
+import { useHistory } from 'react-router'
 import { useTranslation } from 'contexts/Localization'
 import SwapWarningTokens from 'config/constants/swapWarningTokens'
 import { getAddress } from 'utils/addressHelpers'
@@ -48,7 +48,7 @@ const Label = styled(Text)`
   color: ${({ theme }) => theme.colors.secondary};
 `
 
-export default function Swap(props: RouteProps) {
+export default function Swap() {
   const history = useHistory()
   const { width, screen } = useWindowSize()
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -374,10 +374,10 @@ export default function Swap(props: RouteProps) {
     <>
       <MainComp
         tip="Withdraw Circle"
-        flex={6}
+        flex={7}
         justifyContent="space-around"
         alignItems="center"
-        tipSize={3}
+        tipSize={2}
         demo={<Skeleton size={250} />}
       >
         <CurrencyInputPanel
@@ -421,17 +421,6 @@ export default function Swap(props: RouteProps) {
           id="swap-currency-output"
           size={width / 2.5}
         />
-      </MainComp>
-      <MainComp
-        tip="Withdraw Circle"
-        flex={Boolean(trade) ? 6 : 2}
-        justifyContent="space-around"
-        flexDirection="column"
-        alignItems="center"
-        tipSize={2}
-        demo={<Skeleton size={250} />}
-      >
-        <div>{!showWrap && <Prices />}</div>
       </MainComp>
       <MainComp
         tip="Withdraw Circle"
@@ -514,6 +503,17 @@ export default function Swap(props: RouteProps) {
         ) : (
           <SwapButton />
         )}
+      </MainComp>
+      <MainComp
+        tip="Withdraw Circle"
+        flex={Boolean(trade) ? 6 : 2}
+        justifyContent="space-around"
+        flexDirection="column"
+        alignItems="center"
+        tipSize={2}
+        demo={<Skeleton size={250} />}
+      >
+        <div>{!showWrap && <Prices />}</div>
       </MainComp>
     </>
   )

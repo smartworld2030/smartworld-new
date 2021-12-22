@@ -1,53 +1,40 @@
-import { Button } from "@smartworld-libs/uikit";
-import { Link } from "react-router-dom";
+import { PolygonButton } from '@smartworld-libs/uikit'
+import { Scale } from '@smartworld-libs/uikit/dist/components/Button/types'
+import { Link } from 'react-router-dom'
 
 interface HeadCircleProps {
-  positionX: number;
-  positionY: number;
-  textPos: number;
-  size: number;
-  number: number;
-  text: string;
-  link: string;
-  onClick: () => void;
-  active: boolean;
-  icon: JSX.Element;
+  positionX: number
+  positionY: number
+  textPos: number
+  size: Scale
+  number: number
+  text: string
+  link: string
+  onClick: () => void
+  active: boolean
+  icon: (arg: number) => JSX.Element
 }
 
 export const HeadCircle: React.FC<HeadCircleProps> = ({
   positionX,
   positionY,
   size,
-  number,
   onClick,
   active,
   text,
   link,
   icon,
-  textPos,
 }) => {
   return (
-    <foreignObject
-      x={positionX}
-      y={positionY}
-      width={size}
-      height={size}
-      overflow="visible"
-    >
-      <Button
-        shape="circle"
-        variant={active ? "primary" : "secondary"}
-        as={Link}
+    <foreignObject x={positionX} y={positionY} width="1" height="1" overflow="visible">
+      <PolygonButton
+        color={active ? undefined : 'white'}
+        scale={size}
         onClick={onClick}
+        // @ts-ignore
         to={link}
-        size={size}
-      >
-        {text ? (
-          <p style={{ fontSize: 10, textDecoration: "none" }}>{text}</p>
-        ) : (
-          icon
-        )}
-      </Button>
+        icon={(w) => (text ? <p style={{ fontSize: 8, textDecoration: 'none' }}>{text}</p> : icon(w / 3))}
+      ></PolygonButton>
     </foreignObject>
-  );
-};
+  )
+}

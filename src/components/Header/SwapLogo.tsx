@@ -1,19 +1,12 @@
 interface SwapLogoProps {
   width: number
-  x: number
-  y: number
+  x?: number
+  y?: number
 }
 
 export const SwapLogo: React.FC<SwapLogoProps> = ({ width, ...rest }) => {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={width}
-      height={width}
-      viewBox="0 0 400 400"
-      fill="none"
-      {...rest}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width={width} height={width} viewBox="0 0 400 400" fill="none" {...rest}>
       <g>
         <path
           d="M121.57 71.3005C122.323 69.8907 124.344 69.8907 125.097 71.3005L154.958 127.174C155.67 128.506 154.705 130.117 153.195 130.117L93.4726 130.117C91.962 130.117 90.9967 128.506 91.7087 127.174L121.57 71.3005Z"

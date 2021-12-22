@@ -2,7 +2,7 @@ import { useUserInvestDetails } from 'state/invest/hooks'
 import { WithdrawCircle, Flex, Text, TooltipText, Skeleton, MainComp, ReverseFlex } from '@smartworld-libs/uikit'
 import { useBankDollars } from 'state/bank/hooks'
 
-const MainWithdrawSection = () => {
+const MainWithdrawSection = ({ toggle }) => {
   const {
     calculateInterest: { referral, hourly },
     users: { latestWithdraw },
@@ -26,14 +26,14 @@ const MainWithdrawSection = () => {
     <ReverseFlex>
       <MainComp
         tip="Withdraw Circle"
-        flex={8}
+        flex={toggle ? 9 : 6}
         justifyContent="space-around"
         alignItems="center"
         tipSize={3}
         demo={<Skeleton size={200} />}
       >
         <WithdrawCircle
-          progressSize={5}
+          borderColor="white"
           percent={percent}
           totalValue={currencyValues}
           totalValueUnit="$"

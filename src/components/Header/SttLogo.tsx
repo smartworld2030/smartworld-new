@@ -1,19 +1,12 @@
 interface SttLogoProps {
   width: number
-  x: number
-  y: number
+  x?: number
+  y?: number
 }
 
 export const SttLogo: React.FC<SttLogoProps> = ({ width, ...rest }) => {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={width}
-      height={width}
-      viewBox="0 0 400 400"
-      fill="none"
-      {...rest}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width={width} height={width} viewBox="0 0 400 400" fill="none" {...rest}>
       <g>
         <path
           d="M139.3 298.764C137.891 298.01 137.891 295.989 139.3 295.236L195.174 265.375C196.506 264.663 198.117 265.628 198.117 267.139L198.117 326.861C198.117 328.371 196.506 329.337 195.174 328.625L139.3 298.764Z"

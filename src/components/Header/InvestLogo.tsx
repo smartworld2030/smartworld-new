@@ -1,19 +1,12 @@
 interface InvestLogoProps {
   width: number
-  x: number
-  y: number
+  x?: number
+  y?: number
 }
 
 export const InvestLogo: React.FC<InvestLogoProps> = ({ width, ...rest }) => {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={width}
-      height={width}
-      viewBox="0 0 400 400"
-      fill="none"
-      {...rest}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width={width} height={width} viewBox="0 0 400 400" fill="none" {...rest}>
       <g>
         <path
           d="M201.7 88.5696C203.109 89.3231 203.109 91.344 201.7 92.0974L145.826 121.958C144.494 122.67 142.883 121.705 142.883 120.194L142.883 60.4726C142.883 58.962 144.494 57.9967 145.826 58.7087L201.7 88.5696Z"

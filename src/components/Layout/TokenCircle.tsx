@@ -1,4 +1,4 @@
-import { DetailedButton } from '@smartworld-libs/uikit'
+import { IconButton, LogoIcon } from '@smartworld-libs/uikit'
 import { useSpring, animated as a } from 'react-spring'
 
 interface CircleProps {
@@ -18,15 +18,16 @@ const TokenCircle: React.FC<CircleProps> = ({ width, active, token, info, onClic
   return (
     <div style={{ position: 'relative', width, height: width }} onClick={() => onClick(token)}>
       <a.div style={{ position: 'absolute', top: 0, left: 0, opacity: opacity.to((o) => 1 - o), transform }}>
-        <DetailedButton
-          bottomIcon={info && info !== 'Infinity' ? info : 0}
-          bottomFontSize="9px"
+        <IconButton
+          bottomIcon={() => (info && info !== 'Infinity' ? info : 0)}
+          icon={(w) => <LogoIcon width={w} />}
           variant="secondary"
           scale="lg"
           shape="circle"
+          shadow
         >
           {token}
-        </DetailedButton>
+        </IconButton>
       </a.div>
       <a.div
         style={{
@@ -38,14 +39,15 @@ const TokenCircle: React.FC<CircleProps> = ({ width, active, token, info, onClic
           left: 0,
         }}
       >
-        <DetailedButton
-          bottomIcon={info && info !== 'Infinity' ? info : 0}
-          bottomFontSize="9px"
+        <IconButton
+          icon={(w) => <LogoIcon width={w} />}
+          bottomIcon={() => (info && info !== 'Infinity' ? info : 0)}
           scale="lg"
           shape="circle"
+          shadow
         >
           {token}
-        </DetailedButton>
+        </IconButton>
       </a.div>
     </div>
   )

@@ -18,7 +18,7 @@ export default function Updater(): null {
   const dispatch = useDispatch()
   const bankContract = useBankContract()
   const tokenPrice = useBtcPriceContract()
-  const { chainId, account } = useActiveWeb3React()
+  const { chainId } = useActiveWeb3React()
   const multiContract = getMulticallContract()
   const latestBlockNumber = useBlockNumber()
   const windowVisible = useIsWindowVisible()

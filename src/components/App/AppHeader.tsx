@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Text, Flex, Heading, IconButton, ArrowBackIcon, NotificationDot } from '@smartworld-libs/uikit'
+import { Text, Flex, Heading, IconButton, ArrowBackIcon } from '@smartworld-libs/uikit'
 import { Link } from 'react-router-dom'
 import QuestionHelper from '../QuestionHelper'
 
@@ -28,6 +28,7 @@ const AppHeader: React.FC<Props> = ({ title, subtitle, helper, backTo, noConfig 
     <AppHeaderContainer>
       <Flex alignItems="center" mr={noConfig ? 0 : '16px'}>
         {backTo && (
+          // @ts-ignore
           <IconButton as={Link} to={backTo}>
             <ArrowBackIcon width="32px" />
           </IconButton>

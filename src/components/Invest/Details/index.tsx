@@ -7,9 +7,9 @@ import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useUserInvestDetails } from 'state/invest/hooks'
 import useToast from 'hooks/useToast'
 import useTheme from 'hooks/useTheme'
-import { ReverseFlex, MainComp, Skeleton, useWindowSize } from '@smartworld-libs/uikit'
+import { ReverseFlex, MainComp, Skeleton } from '@smartworld-libs/uikit'
 
-export const MainDetailSection = () => {
+export const MainDetailSection = ({ toggle }) => {
   const { account } = useActiveWeb3React()
   const {
     userBalances: { satoshi },
@@ -36,10 +36,10 @@ export const MainDetailSection = () => {
     <ReverseFlex>
       <MainComp
         tip="Long Press Button"
-        flex={6}
+        flex={done ? (toggle ? 8 : 6) : 5.5}
         justifyContent="space-around"
         alignItems="center"
-        tipSize={3}
+        tipSize={2}
         demo={<Skeleton size={80} />}
       >
         {done ? (

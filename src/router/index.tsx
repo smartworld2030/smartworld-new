@@ -67,7 +67,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({ globeHeight }) => {
       timer.current = setTimeout(() => {
         console.log(height)
         setHeight(height)
-        globeHeight(height + 600)
+        globeHeight(height + 500)
       }, 300)
     }
   }
@@ -95,9 +95,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({ globeHeight }) => {
   )
 
   return (
-    <div
-      style={{ position: 'absolute', zIndex: 10, top: 0, width: '100vw', height, background: 'rgb(255 255 255 / 13%)' }}
-    >
+    <div style={{ position: 'absolute', zIndex: 10, top: 0, width: '100vw', height }}>
       <GlobalStyle />
       <SuspenseWithChunkError fallback={<PageLoader />}>
         <Switch>

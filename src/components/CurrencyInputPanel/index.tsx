@@ -1,11 +1,14 @@
 import { Currency, CurrencyAmount, Pair } from '@pancakeswap/sdk'
-import { ChevronDownIcon, Text, useModal, Flex, BalanceInput } from '@smartworld-libs/uikit'
+import { Text, useModal, Flex, BalanceInput } from '@smartworld-libs/uikit'
 import { useTranslation } from 'contexts/Localization'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
-import { CurrencyLogo, DoubleCurrencyLogo } from '../Logo'
+import { CurrencyLogo, useCurrencyLogoSource, DoubleCurrencyLogo } from '../Logo'
 import useBUSDPrice from 'hooks/useBUSDPrice'
+import { useState } from 'react'
+
+const BAD_SRCS: { [tokenAddress: string]: true } = {}
 
 interface CurrencyInputPanelProps {
   value: string
@@ -41,6 +44,8 @@ export default function CurrencyInputPanel({
   maxTokenCanBuy,
   showCommonBases,
 }: CurrencyInputPanelProps) {
+  const [, refresh] = useState<number>(0)
+  const srcs = useCurrencyLogoSource({ currency })
   const { account } = useActiveWeb3React()
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
   const { t } = useTranslation()
@@ -69,6 +74,7 @@ export default function CurrencyInputPanel({
         })
       : '0.00'
 
+  const src: string | undefined = srcs.find((s) => !BAD_SRCS[s])
   return (
     <BalanceInput
       value={value}
@@ -84,6 +90,11 @@ export default function CurrencyInputPanel({
       size={size > 200 ? 200 : size}
       margin={'auto'}
       disabled={hideInput}
+      image={src}
+      onImageError={() => {
+        if (src) BAD_SRCS[src] = true
+        refresh((i) => i + 1)
+      }}
       logo={currency ? <CurrencyLogo currency={currency} size="12px" /> : <CurrencyLogo size="12px" />}
       onLogoClick={() => {
         if (!disableCurrencySelect) {
@@ -113,7 +124,11 @@ export default function CurrencyInputPanel({
                 : currency?.symbol) || t('Select')}
             </Text>
           )}
-          {!disableCurrencySelect && <ChevronDownIcon color="textSubtle" width="12px" />}
+          {!disableCurrencySelect && (
+            <Text color="text" width="15px">
+              ▾
+            </Text>
+          )}
         </Flex>
       }
       placeholder={selectedCurrencyBalance?.toSignificant(6)}

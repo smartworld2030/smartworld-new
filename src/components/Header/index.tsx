@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import React, { useState } from 'react'
 import { sizeCalculator } from './Links'
 import { HeadCircle } from './HeadCircle'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useHistory } from 'react-router-dom'
 import ChainPriceFeed from './ChainPriceFeed'
 
 const StyledSvg = styled.svg`
@@ -10,6 +10,7 @@ const StyledSvg = styled.svg`
   bottom: 0;
   left: 0;
   z-index: 2;
+  overflow: visible;
 `
 
 interface HeaderProps {
@@ -17,12 +18,20 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ width }) => {
-  const { half, quarter, height, linkArray } = sizeCalculator(width)
+  const { half, height, linkArray } = sizeCalculator(width)
   const [, setActive] = useState('/invest')
-  const { pathname } = useLocation()
+  const {
+    push,
+    location: { pathname },
+  } = useHistory()
+
+  const clickHandler = (path) => {
+    push(path)
+    setActive(path)
+  }
 
   return (
-    <StyledSvg height={height + 10} width={width}>
+    <StyledSvg height={height} width={width}>
       <defs>
         <filter id="greyscale">
           <feColorMatrix
@@ -37,16 +46,17 @@ export const Header: React.FC<HeaderProps> = ({ width }) => {
           <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="green" />
         </filter>
       </defs>
-      <path
+      <polygon
         stroke="rgb(150, 150, 150)"
         strokeDasharray="1 6"
-        fill="rgb(0, 0, 0,0.0)"
-        d={`M0,${height} C${half - quarter},0 ${half + quarter},0 ${width},${height}`}
+        fill="none"
+        points={`${half},0 ${width},${height} 0,${height}`}
       />
       {linkArray.map((item, index) => (
-        <HeadCircle {...item} key={index} active={item.link === pathname} onClick={() => setActive(item.link)} />
+        // @ts-ignore
+        <HeadCircle {...item} key={index} active={item.link === pathname} onClick={() => clickHandler(item.link)} />
       ))}
-      <foreignObject width="100%" height="10%" y={height - 10}>
+      <foreignObject width="100%" height="10%" y={height - 20}>
         <ChainPriceFeed />
       </foreignObject>
     </StyledSvg>
