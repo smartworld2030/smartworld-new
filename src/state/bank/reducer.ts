@@ -2,7 +2,7 @@ import { createReducer } from '@reduxjs/toolkit'
 import { updateBankStates } from './actions'
 
 export interface BankData {
-  totalSatoshi: { btc: string; stts: string; bnb: string }
+  totalSatoshi: { BTC: string; STTS: string; BNB: string }
   sttPrice: string
   btcToSatoshi: string
   bnbToSatoshi: string
@@ -10,7 +10,7 @@ export interface BankData {
   latestAnswer: string
 }
 const defaultBankData = {
-  totalSatoshi: { btc: '0', stts: '0', bnb: '0' },
+  totalSatoshi: { BTC: '0', STTS: '0', BNB: '0' },
   sttPrice: '0',
   btcToSatoshi: '0',
   bnbToSatoshi: '0',

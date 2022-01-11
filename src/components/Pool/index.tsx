@@ -1,19 +1,21 @@
-// @ts-nocheck
 import Updater from 'state/pool/updater'
-import MainWithdrawSection from './Withdraw'
-import MainDepositSection from './Deposit'
-import MainDetailSection from './Details'
-import { MainRoute, useWindowSize } from '@smartworld-libs/uikit'
+import WithdrawSection from './Withdraw'
+import DepositSection from './Deposit'
+import DetailSection from './Details'
+import { RouteProps } from 'react-router'
+import { MainContext } from '@smartworld-libs/uikit'
+import { useContext } from 'react'
 
-const MainPool: React.FC<RouteProps> = (props) => {
-  const rest = useWindowSize()
+const MainPool: React.FC<RouteProps> = () => {
+  var showTip = useContext(MainContext).showTip
+
   return (
-    <MainRoute {...props}>
+    <>
       <Updater />
-      <MainDepositSection {...rest} />
-      <MainWithdrawSection {...rest} />
-      <MainDetailSection {...rest} />
-    </MainRoute>
+      <DepositSection toggle={showTip} />
+      <WithdrawSection toggle={showTip} />
+      <DetailSection toggle={showTip} />
+    </>
   )
 }
 

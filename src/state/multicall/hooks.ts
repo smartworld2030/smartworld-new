@@ -295,11 +295,11 @@ export function useSingleCallMultipleMethod(
 
 export interface MultiCallSingleData {
   ifs: Interface
-  address: string
-  name: string
-  decimals?: number
   methods: string[]
   args: (string | number)[][]
+  decimals: number
+  address: string
+  symbol?: string
 }
 
 export interface MultiCallMultipleData {
@@ -324,7 +324,7 @@ export async function multiCallMultipleData(
   multiContract: Contract,
   multiCalls: MultiCallMultipleData[],
   options: MulticallOptions = { requireSuccess: false },
-): Promise<{ [key: string]: string | string[] }> {
+): Promise<{ [key: string]: { [key: string]: string } }> {
   const { requireSuccess } = options
 
   let callCounter = 0
@@ -418,12 +418,12 @@ export async function multiCallRequest(multiContract, multiCalls: MultiCallSingl
     const multiCall = calls.map(({ target, callData }) => [target, callData])
     const data = await multiContract.tryAggregate(requireSuccess, multiCall)
     return multiCalls.reduce(
-      (items, { name, ifs, methods }, i) => ({
+      (items, { symbol, ifs, methods }, i) => ({
         ...items,
         ...methods.reduce(
           (its, method) => ({
             ...its,
-            [name ? name : method + i]: ifs.decodeFunctionResult(method, data[callCounter++].returnData),
+            [symbol ? symbol : method + i]: ifs.decodeFunctionResult(method, data[callCounter++].returnData),
           }),
           {},
         ),

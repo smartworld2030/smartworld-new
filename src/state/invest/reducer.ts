@@ -4,6 +4,7 @@ import { updateInvestStates } from './actions'
 export interface InvestData {
   maxPercent: string
   calculateInterest: {
+    stts: string
     hourly: string
     referral: string
     requestTime: string
@@ -16,10 +17,11 @@ export interface InvestData {
   }
   calculatePercent: string
   users: {
-    id: string
-    refID: string
+    referrer: string
+    refEndTime: string
     refAmounts: string
     refPercent: string
+    totalAmount: string
     latestWithdraw: string
   }
   userDepositNumber: string
@@ -29,6 +31,7 @@ export interface InvestData {
 const defaultInvestData = {
   maxPercent: '1000',
   calculateInterest: {
+    stts: '0',
     hourly: '0',
     referral: '0',
     requestTime: '0',
@@ -41,14 +44,15 @@ const defaultInvestData = {
   },
   calculatePercent: '0',
   users: {
-    id: '0',
-    refID: '0',
+    referrer: '0',
+    refEndTime: '0',
     refAmounts: '0',
     refPercent: '0',
+    totalAmount: '0',
     latestWithdraw: '0',
   },
   userDepositNumber: '0',
-  userDepositDetails: [{ reward: '0', endTime: '0' }],
+  userDepositDetails: [{ amount: '0', period: '0', reward: '0', startTime: '0', endTime: '0' }],
 }
 
 export interface InvestState {

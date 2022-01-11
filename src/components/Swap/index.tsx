@@ -50,7 +50,7 @@ const Label = styled(Text)`
 
 export default function Swap() {
   const history = useHistory()
-  const { width, screen } = useWindowSize()
+  const { width } = useWindowSize()
   const loadedUrlParams = useDefaultsFromURLSearch()
 
   const { t } = useTranslation()
@@ -396,7 +396,7 @@ export default function Swap() {
         <Flex justifyContent="center" flexDirection="column">
           <Button
             // @ts-ignore
-            scale={screen ? screen : 'xl'}
+            scale="sm"
             shape="circle"
             onClick={() => {
               setApprovalSubmitted(false) // reset 2 step UI for approvals

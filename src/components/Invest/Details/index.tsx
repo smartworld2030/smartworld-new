@@ -4,16 +4,14 @@ import ReferralButton from '../../Layout/ReferralButton'
 import copy from 'copy-to-clipboard'
 import QRCode from 'react-qr-code'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
-import { useUserInvestDetails } from 'state/invest/hooks'
+import { useUserInvestInfo } from 'state/invest/hooks'
 import useToast from 'hooks/useToast'
 import useTheme from 'hooks/useTheme'
 import { ReverseFlex, MainComp, Skeleton } from '@smartworld-libs/uikit'
 
 export const MainDetailSection = ({ toggle }) => {
   const { account } = useActiveWeb3React()
-  const {
-    userBalances: { satoshi },
-  } = useUserInvestDetails()
+  const { totalAmount } = useUserInvestInfo()
 
   const {
     theme: { colors },
@@ -36,7 +34,7 @@ export const MainDetailSection = ({ toggle }) => {
     <ReverseFlex>
       <MainComp
         tip="Long Press Button"
-        flex={done ? (toggle ? 8 : 6) : 5.5}
+        flex={done ? (toggle ? 9 : 6) : 5.5}
         justifyContent="space-around"
         alignItems="center"
         tipSize={2}
@@ -52,7 +50,7 @@ export const MainDetailSection = ({ toggle }) => {
             style={{ position: 'relative' }}
           />
         ) : (
-          <ReferralButton width={90} onClick={copyHandler} disable={satoshi === '0'} />
+          <ReferralButton width={90} onClick={copyHandler} disable={totalAmount === '0'} />
         )}
       </MainComp>
     </ReverseFlex>

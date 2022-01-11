@@ -1,83 +1,86 @@
-import { BalanceInput, ReverseFlex, MainComp, Skeleton, useWindowSize } from '@smartworld-libs/uikit'
+import { CurrencyAmount } from '@pancakeswap/sdk'
+import { BalanceInput, ReverseFlex, MainComp, Skeleton } from '@smartworld-libs/uikit'
+import { useFilteredProjectToken } from 'hooks/Tokens'
 import { useState, useEffect } from 'react'
-import { useBankDollars, useBankSatoshi } from 'state/bank/hooks'
-import { useInvestTokenBalances } from 'state/wallet/hooks'
-import TokenCircle from '../../Layout/TokenCircle'
+import { useBankDollars } from 'state/bank/hooks'
+import { tryParseAmount } from 'state/swap/hooks'
+import { useSmartTokenBalances } from 'state/wallet/hooks'
+import TokenCircle from '../../Layout/InvestTokenCircle'
 import DepositInfo from './DepositInfo'
 
-export const tokenNames = ['STTS', 'BNB', 'BTC']
+export const neededToken = ['STTS', 'BNB', 'BTC']
+
+type ValueType = {
+  [x: string]: CurrencyAmount | undefined
+}
 
 export const MainDepositSection = ({ toggle }) => {
   const dollar = useBankDollars()
-  const prices = useBankSatoshi()
-  const tokens = useInvestTokenBalances()
+  const balances = useSmartTokenBalances()
+  const tokens = useFilteredProjectToken(neededToken)
 
-  const [token, setToken] = useState('STTS')
+  const [token, setToken] = useState<string>('STTS')
   const [editingUnit, setEditingUnit] = useState<string | 'USD'>(token)
-  const [values, setValues] = useState({
-    [token]: tokens[token] ? tokens[token] : '',
-    USD: `${tokens[token] * dollar[token]}`,
+
+  const [inputs, setInputs] = useState(['', ''])
+
+  const [values, setValues] = useState<ValueType>({
+    ...balances,
   })
 
   const conversionUnit = editingUnit === token ? 'USD' : token
 
   useEffect(() => {
     setEditingUnit(token)
-    setValues({
-      [token]: '',
-      USD: '',
-    })
+    setInputs(['', ''])
+    setValues((prev) => ({ ...prev, [token]: undefined }))
     return () => {
-      setValues({
-        [token]: '',
-        USD: '',
-      })
+      setValues((prev) => ({ ...prev, [token]: undefined }))
     }
   }, [token])
 
-  const minimumAmount = (t: string) => (500000 / Number(prices[t.toLowerCase()])).toFixed(t === 'STTS' ? 0 : 3)
+  const minimumAmount = (t: string) => {
+    return (100 / dollar[t]).toFixed(t === 'STTS' ? 1 : 4)
+  }
 
-  const currencyValues = !Number.isNaN(parseFloat(values[conversionUnit]))
-    ? '~' +
-      parseFloat(values[conversionUnit]).toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })
-    : '0.00'
+  const currencyValues =
+    '~' +
+    (conversionUnit === 'USD'
+      ? parseFloat(inputs[0] || '0').toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })
+      : values[conversionUnit]?.toSignificant(4))
 
   const handleInputChange = (input: string) => {
     const inputAsFloat = parseFloat(input)
     if (editingUnit !== 'USD') {
-      setValues({
-        [token]: input,
-        USD: Number.isNaN(inputAsFloat) ? '' : `${inputAsFloat * dollar[token.toLowerCase()]}`,
-      })
+      setValues((prev) => ({
+        ...prev,
+        [token]: tryParseAmount(input, tokens[editingUnit]),
+      }))
+      setInputs([`${inputAsFloat * dollar[token]}`, input])
     } else {
-      setValues({
-        [token]: Number.isNaN(inputAsFloat) ? '' : `${inputAsFloat / dollar[token.toLowerCase()]}`,
-        USD: input,
-      })
+      setValues((prev) => ({
+        ...prev,
+        [token]: tryParseAmount((inputAsFloat / +dollar[token]).toString(), tokens[token]),
+      }))
+      setInputs([input, `${inputAsFloat / dollar[token]}`])
     }
   }
 
   const switchEditingUnits = () => {
-    const editingUnitAfterChange = editingUnit === token ? 'USD' : token
-    // This is needed to persist same value as shown for currencyValue after switching
-    // otherwise user will see lots of decimals
-    const valuesAfterChange = { ...values }
-    valuesAfterChange[editingUnitAfterChange] = !Number.isNaN(parseFloat(values[conversionUnit]))
-      ? parseFloat(values[conversionUnit]).toFixed(2)
-      : ''
-    setValues(valuesAfterChange)
-    setEditingUnit(editingUnitAfterChange)
+    setValues((prev) => ({ ...prev, [token]: values[token] }))
+    setEditingUnit(conversionUnit)
   }
 
   const balanceValues = () => {
-    const inputAsFloat = parseFloat(tokens?.[token])
+    const inputAsFloat = balances?.[token]?.toSignificant()
+
     if (editingUnit !== 'USD') {
-      return tokens?.[token]
+      return balances?.[token]?.toSignificant()
     } else {
-      return Number.isNaN(inputAsFloat) ? '0' : `${inputAsFloat * dollar[token.toLowerCase()]}`
+      return Number.isNaN(inputAsFloat) ? '0' : `${inputAsFloat * dollar[token]}`
     }
   }
 
@@ -85,7 +88,8 @@ export const MainDepositSection = ({ toggle }) => {
     <ReverseFlex>
       <MainComp
         tip="Token Selection"
-        flex={toggle ? 7 : 4}
+        tipSize={2}
+        flex={toggle ? 6 : 4}
         flexDirection="row"
         justifyContent="space-around"
         alignItems="center"
@@ -93,27 +97,35 @@ export const MainDepositSection = ({ toggle }) => {
           <Skeleton key={i} shape="circle" scale="lg" />
         ))}
       >
-        {tokenNames.map((t) => (
-          <TokenCircle key={t} width={70} onClick={setToken} token={t} active={token === t} info={minimumAmount(t)} />
+        {Object.keys(tokens).map((t) => (
+          <TokenCircle
+            key={t}
+            width={90}
+            onClick={setToken}
+            token={tokens[t]}
+            active={token === t}
+            info={minimumAmount(t)}
+          />
         ))}
       </MainComp>
       <MainComp
         tip="Balance Input"
-        flex={toggle ? 12 : 7}
+        flex={toggle ? 12 : 9}
+        tipSize={3}
         flexDirection="row"
         justifyContent="space-around"
         alignItems="center"
         demo={<Skeleton size={200} />}
       >
         <BalanceInput
-          value={values[editingUnit]}
+          value={editingUnit === 'USD' ? inputs[0] : inputs[1]}
           maxValue={balanceValues()}
           onUserInput={handleInputChange}
           unit={editingUnit}
           currencyValue={currencyValues}
           currencyUnit={conversionUnit}
           placeholder={balanceValues()}
-          size={200}
+          size={250}
           progressColor={balanceValues() === '0' ? 'transparent' : undefined}
           disabled={balanceValues() === '0'}
           switchEditingUnits={switchEditingUnits}
@@ -127,7 +139,7 @@ export const MainDepositSection = ({ toggle }) => {
         tipSize={3}
         demo={<Skeleton size={80} />}
       >
-        <DepositInfo token={token} value={Number(values[token] ?? 0)} prices={prices} />
+        <DepositInfo token={tokens[token]} value={values[token]} price={inputs[0]} />
       </MainComp>
     </ReverseFlex>
   )

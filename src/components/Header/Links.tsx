@@ -6,15 +6,15 @@ export const sizeCalculator = (width: number) => {
   const half = width / 2
   let quarter = half / 2
   let eighth = quarter / 2
-  const height = 170
-  let fristHeight = height - 120
-  let secondHeight = height - 85
+  const height = 180
+  let fristHeight = height - 130
+  let secondHeight = height - 95
   let querylimiter = true
   if (width < 600) {
     quarter = half / 1.2
-    eighth = quarter / 1.6
+    eighth = quarter / 1.8
     fristHeight = height - 70
-    secondHeight = height - 55
+    secondHeight = height - 65
     querylimiter = false
   }
   const linkArray = [
@@ -40,7 +40,7 @@ export const sizeCalculator = (width: number) => {
     },
     {
       positionX: half - 46,
-      positionY: -42,
+      positionY: -32,
       size: 'ml',
       link: '/invest',
       text: '',

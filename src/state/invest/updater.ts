@@ -25,52 +25,51 @@ export default function Updater(): number {
   const latestBlockNumber = useBlockNumber()
   const windowVisible = useIsWindowVisible()
 
-  const calls = useMemo(
-    () => [
-      account
-        ? {
+  const calls = useMemo(async () => {
+    const userDepositNumber = account ? Number(await investContract.userDepositNumber(account)) : 0
+    return userDepositNumber
+      ? [
+          {
             ifs: investContract.interface,
             address: investContract.address,
-            methods: [
-              'maxPercent',
-              'userBalances',
-              'users',
-              'calculateInterest',
-              'users',
-              'userDepositNumber',
-              'userDepositDetails',
-            ],
-            args: [[], [account], [account], [account], [account], [account], [account, 0]],
-          }
-        : {
+            methods: ['maxPercent', 'users', 'calculateInterest', 'users', 'userDepositNumber', 'userDepositDetails'],
+            args: [[], [account], [account], [account], [account], [account, 0]],
+          },
+        ]
+      : [
+          {
             ifs: investContract.interface,
             address: investContract.address,
             methods: ['maxPercent'],
             args: [[]],
           },
-    ],
-    [investContract, account],
-  )
+        ]
+  }, [investContract, account])
 
   useEffect(() => {
     if (!latestBlockNumber || !windowVisible) return
     cancelation = false
     async function multiCallRequest() {
-      const results = await multiCallMultipleData(multiContract, calls, { requireSuccess: false })
-      const length = Number(results?.userDepositNumber?.toString())
-      if (length > 1) {
+      const results = await calls.then(async (multicalls) => await multiCallMultipleData(multiContract, multicalls))
+      const length = Number(results?.userDepositNumber)
+      const interest =
+        Number(results?.calculateInterest?.hourly?.toString()) +
+        Number(results?.calculateInterest?.referral?.toString())
+      if (length > 0) {
         const multicalls: MultiCallMultipleData = {
           ifs: investContract.interface,
           address: investContract.address,
-          methods: ['userDepositDetails'],
-          args: [[account, 0]],
+          methods: ['USDToStts', 'userDepositDetails'],
+          args: [[interest], [account, 0]],
         }
         for (let i = 1; i < length; i++) {
           multicalls.args.push([account, i])
           multicalls.methods.push('userDepositDetails')
         }
         singleContractMultiCallRequest(multiContract, multicalls, false).then((res) => {
-          if (!cancelation) setData({ ...results, userDepositDetails: res })
+          const [stts, ...rest] = res
+          results.calculateInterest = { ...results.calculateInterest, ...{ stts } }
+          if (!cancelation) setData({ ...results, userDepositDetails: rest })
         })
       } else {
         if (!cancelation) setData(results)

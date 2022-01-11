@@ -85,16 +85,28 @@ function useContract(address: string | undefined, ABI: any, withSignerIfPossible
   }, [address, ABI, library, withSignerIfPossible, account])
 }
 
-export function usePoolContract(): Contract | null {
+export function usePoolAddress(): string {
   const { chainId } = useActiveWeb3React()
 
-  return useContract(pool.address[chainId], pool.abi, false)
+  return pool.address[chainId]
+}
+
+export function useInvestAddress(): string {
+  const { chainId } = useActiveWeb3React()
+
+  return invest.address[chainId]
+}
+
+export function usePoolContract(): Contract | null {
+  const address = usePoolAddress()
+
+  return useContract(address, pool.abi, true)
 }
 
 export function useInvestContract(): Contract | null {
-  const { chainId } = useActiveWeb3React()
+  const address = useInvestAddress()
 
-  return useContract(invest.address[chainId], invest.abi, false)
+  return useContract(address, invest.abi, true)
 }
 
 export function useBankContract(): Contract | null {

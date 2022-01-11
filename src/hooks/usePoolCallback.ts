@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import isZero from '../utils/isZero'
-import { useInvestContract } from './useContract'
+import { usePoolContract } from './useContract'
 
 export enum InvestCallbackState {
   INVALID,
@@ -12,14 +12,14 @@ export enum InvestCallbackState {
 
 // returns a function that will execute a swap, if the parameters are all valid
 // and the user has approved the slippage adjusted input amount for the trade
-export function useInvestCallback(
+export function usePoolCallback(
   methodName: string, // trade to execute, required
   args: any[],
   value: string | undefined,
   details?: { [key: string]: string | number },
 ): { state: InvestCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
-  const contract = useInvestContract()
+  const contract = usePoolContract()
 
   const addTransaction = useTransactionAdder()
 
@@ -62,21 +62,25 @@ export function useInvestCallback(
           ...(value && !isZero(value) ? { value, from: account } : { from: account }),
         })
           .then((response: any) => {
-            const inputSymbol = methodName.split(/(?=[A-Z])/)[1]
-
-            if (inputSymbol === 'Interest') {
+            const inputSymbol = methodName.split(/(?=[A-Z])/)
+            if (inputSymbol[1] === 'Interest') {
               const stts = (+details.stts / 10 ** 8).toFixed(2)
               const dollar = (+details.dollar / 10 ** 8).toFixed(2)
               addTransaction(response, {
-                summary: `SmartInvest: Withdraw ${stts} STTS(${dollar}$)`,
+                summary: `SmartPool: Withdraw ${stts} STTS(${dollar}$)`,
+              })
+            } else if (inputSymbol[2] === 'L') {
+              const stts = (+details.lptoken / 10 ** 8).toFixed(2)
+              addTransaction(response, {
+                summary: `SmartPool: Freeze ${stts} LPToken`,
               })
             } else {
-              const inputAmount = args[args.length - 1].toSignificant(3)
+              const stts = (+details.stts / 10 ** 8).toFixed(2)
+              const bnb = (+details.bnb / 10 ** 18).toFixed(4)
               addTransaction(response, {
-                summary: `SmartInvest: Invest ${inputAmount} ${inputSymbol.toUpperCase()}`,
+                summary: `SmartPool: Freeze ${stts} STTS + ${bnb} BNB`,
               })
             }
-
             return response.hash
           })
           .catch((error: any) => {
@@ -85,12 +89,12 @@ export function useInvestCallback(
               throw new Error('Transaction rejected.')
             } else {
               // otherwise, the error was unexpected and we need to convey that
-              console.error(`Invest failed`, error, methodName, args, value)
-              throw new Error(`Invest failed: ${error.message}`)
+              console.error(`Freeze failed`, error, methodName, args, value)
+              throw new Error(`Freeze failed: ${error.message}`)
             }
           })
       },
       error: null,
     }
-  }, [library, account, chainId, contract, methodName, args, value, details, addTransaction])
+  }, [value, library, account, chainId, contract, methodName, args, details, addTransaction])
 }

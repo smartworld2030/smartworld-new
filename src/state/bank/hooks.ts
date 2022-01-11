@@ -20,20 +20,21 @@ export function useBankBalances(): BankData['totalSatoshi'] {
   return useSelector((state: AppState) => state.bank[chainId ?? -1]?.totalSatoshi)
 }
 
-export function useBankSatoshi(): { btc: string; bnb: string; stts: string; stt: string } {
+export function useBankSatoshi(): { BTC: string; BNB: string; STTS: string; STT: string } {
   const { btcToSatoshi, bnbToSatoshi, sttsToSatoshi, sttPrice } = useBankStates()
 
-  return { btc: btcToSatoshi, bnb: bnbToSatoshi, stts: sttsToSatoshi, stt: sttPrice }
+  return { BTC: btcToSatoshi, BNB: bnbToSatoshi, STTS: sttsToSatoshi, STT: sttPrice }
 }
 
-export function useBankDollars(): { btc: string; bnb: string; stts: string; stt: string } {
+export function useBankDollars(): { BTC: string; BNB: string; STTS: string; STT: string; LPTOKEN: string } {
   const { bnbToSatoshi, sttsToSatoshi, latestAnswer } = useBankStates()
   const sttPrice = useSttPrice()
-  const btc = (+latestAnswer / 10 ** 8).toFixed(2)
-  const stt = ((+sttPrice * +btc) / 10 ** 8).toFixed(4)
-  const bnb = ((+bnbToSatoshi / 10 ** 8) * +btc).toFixed(2)
-  const stts = ((+sttsToSatoshi / 10 ** 8) * +btc).toFixed(2)
-  return { btc, bnb, stts, stt }
+  const BTC = (+latestAnswer / 10 ** 8).toFixed(2)
+  const STT = ((+sttPrice * +BTC) / 10 ** 8).toFixed(4)
+  const BNB = ((+bnbToSatoshi / 10 ** 8) * +BTC).toFixed(2)
+  const STTS = ((+sttsToSatoshi / 10 ** 8) * +BTC).toFixed(2)
+  const LPTOKEN = (+STTS * 2).toFixed(2)
+  return { BTC, BNB, STTS, STT, LPTOKEN }
 }
 
 export default useBankStates

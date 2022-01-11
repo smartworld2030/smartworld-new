@@ -1,5 +1,5 @@
 import { parseUnits } from '@ethersproject/units'
-import { Currency, CurrencyAmount, ETHER, JSBI, Percent, Token, TokenAmount, Trade } from '@pancakeswap/sdk'
+import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount, Trade } from '@pancakeswap/sdk'
 import { ParsedQs } from 'qs'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -73,7 +73,7 @@ export function tryParseAmount(value?: string, currency?: Currency): CurrencyAmo
     return undefined
   }
   try {
-    const typedValueParsed = parseUnits(value, currency.decimals).toString()
+    const typedValueParsed = parseUnits(Number(value).toFixed(currency.decimals), currency.decimals).toString()
     if (typedValueParsed !== '0') {
       return currency instanceof Token
         ? new TokenAmount(currency, JSBI.BigInt(typedValueParsed))

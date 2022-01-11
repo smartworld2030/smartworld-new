@@ -1,6 +1,5 @@
 import { PolygonButton } from '@smartworld-libs/uikit'
 import { Scale } from '@smartworld-libs/uikit/dist/components/Button/types'
-import { Link } from 'react-router-dom'
 
 interface HeadCircleProps {
   positionX: number

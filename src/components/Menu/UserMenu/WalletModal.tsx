@@ -1,12 +1,5 @@
 import React, { useState } from 'react'
-import {
-  ButtonMenu,
-  ButtonMenuItem,
-  Flex,
-  InjectedModalProps,
-  ModalBody,
-  ModalHeader as UIKitModalHeader,
-} from '@smartworld-libs/uikit'
+import { ButtonMenu, ButtonMenuItem, Flex, InjectedModalProps } from '@smartworld-libs/uikit'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import styled from 'styled-components'
@@ -24,10 +17,6 @@ interface WalletModalProps extends InjectedModalProps {
 }
 
 export const LOW_BNB_BALANCE = new BigNumber('2000000000') // 2 Gwei
-
-const ModalHeader = styled(UIKitModalHeader)`
-  background: ${({ theme }) => theme.colors.gradients.bubblegum};
-`
 
 const Tabs = styled.div`
   background-color: ${({ theme }) => theme.colors.dropdown};

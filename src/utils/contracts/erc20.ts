@@ -3,12 +3,14 @@ const erc20 = {
     56: {
       stt: '0xbBe476b50D857BF41bBd1EB02F777cb9084C1564',
       stts: '0x88469567A9e6b2daE2d8ea7D8C77872d9A0d43EC',
-      btcb: '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c',
+      btcb: '0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c',
+      lptoken: '0x45Ee99347E4E3946bE250fEC8172401965E2DFB3',
     },
     97: {
       stt: '0x75Bea6460fff60FF789F88f7FE005295B8901455',
       stts: '0xBFd0Ac6cD15712E0a697bDA40897CDc54b06D7Ef',
       btcb: '0x3c26729bb1Cf37d18EFdF3bb957f5e0de5c2Cb12',
+      lptoken: '0x3403db5EDd2541Aaa3793De4C0FFb31463A3D1cF',
     },
   },
   decimals: {

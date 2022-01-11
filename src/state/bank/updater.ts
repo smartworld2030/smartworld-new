@@ -4,12 +4,7 @@ import useDebounce from 'hooks/useDebounce'
 import { updateBankStates } from './actions'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useBankContract, useBtcPriceContract } from 'hooks/useContract'
-import {
-  MultiCallMultipleData,
-  singleContractMultiCallRequest,
-  multiCallMultipleData,
-  resConverter,
-} from 'state/multicall/hooks'
+import { multiCallMultipleData, resConverter } from 'state/multicall/hooks'
 import { getMulticallContract } from 'utils/contractHelpers'
 import useBlockNumber from 'state/application/hooks'
 import useIsWindowVisible from 'hooks/useIsWindowVisible'

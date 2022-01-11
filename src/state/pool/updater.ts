@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { updatePoolStates } from './actions'
-import { useInvestContract } from 'hooks/useContract'
+import { usePoolContract } from 'hooks/useContract'
 import {
   MultiCallMultipleData,
   singleContractMultiCallRequest,
@@ -20,48 +20,48 @@ export default function Updater(): null {
   const dispatch = useDispatch()
   const [data, setData] = useState({})
   const { chainId, account } = useActiveWeb3React()
-  const investContract = useInvestContract()
+  const poolContract = usePoolContract()
   const multiContract = getMulticallContract()
   const latestBlockNumber = useBlockNumber()
   const windowVisible = useIsWindowVisible()
 
-  const calls = useMemo(
-    () => [
-      account
-        ? {
-            ifs: investContract.interface,
-            address: investContract.address,
+  const calls = useMemo(async () => {
+    const userDepositNumber = account ? Number(await poolContract.userDepositNumber(account)) : 0
+    return userDepositNumber
+      ? [
+          {
+            ifs: poolContract.interface,
+            address: poolContract.address,
             methods: [
-              'maxPercent',
-              'userBalances',
-              'users',
-              'calculateInterest',
               'users',
               'userDepositNumber',
+              'calculateLiquidityValue',
+              'calculateInterest',
               'userDepositDetails',
             ],
-            args: [[], [account], [account], [account], [account], [account], [account, 0]],
-          }
-        : {
-            ifs: investContract.interface,
-            address: investContract.address,
-            methods: ['maxPercent'],
-            args: [[]],
+            args: [[account], [account], [(10 ** 18).toString()], [account], [account, 0]],
           },
-    ],
-    [investContract, account],
-  )
+        ]
+      : [
+          {
+            ifs: poolContract.interface,
+            address: poolContract.address,
+            methods: ['calculateLiquidityValue'],
+            args: [[(10 ** 18).toString()]],
+          },
+        ]
+  }, [poolContract, account])
 
   useEffect(() => {
     if (!latestBlockNumber || !windowVisible) return
     cancelation = false
     async function multiCallRequest() {
-      const results = await multiCallMultipleData(multiContract, calls, { requireSuccess: false })
-      const length = Number(results?.userDepositNumber?.toString())
-      if (length > 1) {
+      const results = await calls.then(async (multicalls) => await multiCallMultipleData(multiContract, multicalls))
+      const length = Number(results?.userDepositNumber)
+      if (length > 0) {
         const multicalls: MultiCallMultipleData = {
-          ifs: investContract.interface,
-          address: investContract.address,
+          ifs: poolContract.interface,
+          address: poolContract.address,
           methods: ['userDepositDetails'],
           args: [[account, 0]],
         }
@@ -69,9 +69,11 @@ export default function Updater(): null {
           multicalls.args.push([account, i])
           multicalls.methods.push('userDepositDetails')
         }
-        singleContractMultiCallRequest(multiContract, multicalls, false).then((res) => {
-          if (!cancelation) setData({ ...results, userDepositDetails: res })
-        })
+        singleContractMultiCallRequest(multiContract, multicalls, false)
+          .then((res) => {
+            if (!cancelation) setData({ ...results, userDepositDetails: res })
+          })
+          .catch()
       } else {
         if (!cancelation) setData(results)
       }
@@ -103,7 +105,7 @@ export default function Updater(): null {
   const states = useDebounce(compiledStates, 500)
 
   useEffect(() => {
-    if (!chainId) return
+    if (!chainId && cancelation) return
     dispatch(
       updatePoolStates({
         chainId,

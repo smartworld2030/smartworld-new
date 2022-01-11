@@ -4,8 +4,9 @@ import { updatePoolStates } from './actions'
 export interface PoolData {
   maxPercent: string
   calculateInterest: {
-    hourly: string
+    daily: string
     referral: string
+    referrer: string
     requestTime: string
   }
   userBalances: {
@@ -14,10 +15,16 @@ export interface PoolData {
     stts: string
     satoshi: string
   }
+  calculateLiquidityValue: {
+    bnb: string
+    stts: string
+    total: string
+  }
   calculatePercent: string
   users: {
     id: string
-    refID: string
+    liquidity: string
+    referrer: string
     refAmounts: string
     refPercent: string
     latestWithdraw: string
@@ -26,8 +33,9 @@ export interface PoolData {
 const defaultPoolData = {
   maxPercent: '1000',
   calculateInterest: {
-    hourly: '0',
+    daily: '0',
     referral: '0',
+    referrer: '0',
     requestTime: '0',
   },
   userBalances: {
@@ -36,10 +44,16 @@ const defaultPoolData = {
     stts: '0',
     satoshi: '0',
   },
+  calculateLiquidityValue: {
+    bnb: '0',
+    stts: '0',
+    total: '0',
+  },
   calculatePercent: '0',
   users: {
     id: '0',
-    refID: '0',
+    referrer: '0',
+    liquidity: '0',
     refAmounts: '0',
     refPercent: '0',
     latestWithdraw: '0',

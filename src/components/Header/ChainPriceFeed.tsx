@@ -7,16 +7,16 @@ interface ChainPriceFeedProps {}
 type IProps = ChainPriceFeedProps
 
 export const ChainPriceFeed: React.FC<IProps> = () => {
-  const { btc: $btc } = useBankDollars()
+  const { BTC: $BTC } = useBankDollars()
   const prices = useBankSatoshi()
-  const { stts, bnb, btc } = useBankBalances()
-  const total = stts + bnb + btc
+  const { STTS, BNB, BTC } = useBankBalances()
+  const total = STTS + BNB + BTC
 
-  const calcBTC = (value) => value / +$btc
+  const calcBTC = (value) => value / +$BTC
 
-  const calcBtcPrice = (value) => Math.round(calcBTC(value) * +$btc).toLocaleString('en')
+  const calcBtcPrice = (value) => Math.round(calcBTC(value) * +$BTC).toLocaleString('en')
 
-  const calcDollar = (token) => ((prices[token] / 10 ** 8) * +$btc).toString()
+  const calcDollar = (token) => ((prices[token] / 10 ** 8) * +$BTC).toString()
 
   return prices && total ? (
     <Marquee gradient={false}>
@@ -34,7 +34,7 @@ export const ChainPriceFeed: React.FC<IProps> = () => {
           </p>
           STT:
           <p className="price-value">
-            {prices.stt}
+            {prices.STT}
             <span>SATS</span>
           </p>
           STTS:

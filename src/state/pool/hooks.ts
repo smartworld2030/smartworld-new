@@ -5,13 +5,13 @@ import { PoolData } from './reducer'
 
 export function usePoolStates(): PoolData {
   const { chainId } = useActiveWeb3React()
-  return useSelector((state: AppState) => state.invest[chainId ?? -1])
+  return useSelector((state: AppState) => state.pool[chainId ?? -1])
 }
 
 export function usePoolMax(): number {
   const { chainId } = useActiveWeb3React()
 
-  return useSelector((state: AppState) => +state.invest[chainId ?? -1]?.maxPercent)
+  return useSelector((state: AppState) => +state.pool[chainId ?? -1]?.maxPercent)
 }
 
 export function useUserPoolDetails(): PoolData {
@@ -21,25 +21,31 @@ export function useUserPoolDetails(): PoolData {
 export function useUserPoolInfo(): PoolData['users'] {
   const { chainId } = useActiveWeb3React()
 
-  return useSelector((state: AppState) => state.invest[chainId ?? -1]?.users)
+  return useSelector((state: AppState) => state.pool[chainId ?? -1]?.users)
+}
+
+export function useLiquidityValue(): PoolData['calculateLiquidityValue'] {
+  const { chainId } = useActiveWeb3React()
+
+  return useSelector((state: AppState) => state.pool[chainId ?? -1]?.calculateLiquidityValue)
 }
 
 export function useUserPoolInterest(): PoolData['calculateInterest'] {
   const { chainId } = useActiveWeb3React()
 
-  return useSelector((state: AppState) => state.invest[chainId ?? -1]?.calculateInterest)
+  return useSelector((state: AppState) => state.pool[chainId ?? -1]?.calculateInterest)
 }
 
 export function useUserPoolPercent(): PoolData['calculatePercent'] {
   const { chainId } = useActiveWeb3React()
 
-  return useSelector((state: AppState) => state.invest[chainId ?? -1]?.calculatePercent)
+  return useSelector((state: AppState) => state.pool[chainId ?? -1]?.calculatePercent)
 }
 
 export function useUserPoolBalance(): PoolData['userBalances'] {
   const { chainId } = useActiveWeb3React()
 
-  return useSelector((state: AppState) => state.invest[chainId ?? -1]?.userBalances)
+  return useSelector((state: AppState) => state.pool[chainId ?? -1]?.userBalances)
 }
 
 export default usePoolStates

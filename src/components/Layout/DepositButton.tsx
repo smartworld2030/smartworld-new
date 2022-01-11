@@ -44,30 +44,38 @@ interface DepositButtonProps {
   done: boolean
   loading: boolean
   disable?: boolean
+  allowance?: boolean
   onClick: () => void
 }
 
-export const DepositButton: React.FC<DepositButtonProps> = ({ done, loading, disable, onClick }) => {
+const DepositButton: React.FC<DepositButtonProps> = ({ done, loading, allowance = true, disable, onClick }) => {
   const {
     theme: { colors },
   } = useTheme()
 
   return (
     <IconButton
-      scale="ml"
+      scale="xl"
       shape="circle"
+      fontSize={20}
       onClick={disable ? undefined : onClick}
-      color={disable ? colors.textSubtle : colors.primary}
+      color={disable ? colors.disabled : colors.primary}
       blur={false}
-      icon={(w) => (
-        <AnimatedRefIcon
-          width={w}
-          done={done}
-          loading={loading}
-          opacity={loading || done ? '1' : disable ? '1' : '0.6'}
-          fill={disable ? colors.textSubtle : colors.primary}
-        />
-      )}
-    />
+      disabled={disable}
+      icon={(w) =>
+        allowance && (
+          <AnimatedRefIcon
+            width={w}
+            done={done}
+            loading={loading}
+            opacity={loading || done ? '1' : disable ? '1' : '0.6'}
+            fill={disable ? colors.disabled : colors.primary}
+          />
+        )
+      }
+    >
+      APPROVE
+    </IconButton>
   )
 }
+export default DepositButton
