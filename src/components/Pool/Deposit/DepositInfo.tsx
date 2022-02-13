@@ -1,62 +1,46 @@
-import { Token, TokenAmount } from '@pancakeswap/sdk'
+import { Token } from '@pancakeswap/sdk'
+import { useModal } from '@smartworld-libs/uikit'
 import DepositButton from 'components/Layout/DepositButton'
+import ConfirmDepositModal from 'components/Swap/components/ConfirmDepositModal'
 import { useApproveCallback } from 'hooks/useApproveCallback'
 import { usePoolAddress } from 'hooks/useContract'
 import { usePoolDepositCallback } from 'hooks/usePoolDepositCallback'
-import { useCallback } from 'react'
 import { ValueType } from '.'
 
 interface DepositInfoProps {
   token: Token
+  error: string
   price: string
   values: ValueType
 }
 
-const DepositInfo: React.FC<DepositInfoProps> = ({ price, token, values }) => {
-  // const { callback } = usePoolDepositCallback({ token: token.symbol, values })
-  const callback = {}
-  const spender = usePoolAddress()
+const DepositInfo: React.FC<DepositInfoProps> = ({ error, price, token, values }) => {
+  const [deposit, { callback }] = usePoolDepositCallback({ token: token.symbol, values, price })
 
+  const spender = usePoolAddress()
   const currencyAmount = values?.[token.symbol]
 
-  const [allowance, approveCallback] = useApproveCallback(currencyAmount, spender)
+  const [approval, approveCallback] = useApproveCallback(currencyAmount, spender)
 
-  const handleDeposit = useCallback(() => {
-    if (!callback) {
-      return
-    }
-    if (allowance !== 3) {
-      return approveCallback()
-    }
-    // callback()
-    //   .then((hash) => {
-    //     console.log(hash)
-    //     // setSwapState({
-    //     //   attemptingTxn: false,
-    //     //   tradeToConfirm,
-    //     //   swapErrorMessage: undefined,
-    //     //   txHash: hash,
-    //     // })
-    //   })
-    //   .catch((error) => {
-    //     console.log(error)
-
-    //     // setSwapState({
-    //     //   attemptingTxn: false,
-    //     //   tradeToConfirm,
-    //     //   swapErrorMessage: error.message,
-    //     //   txHash: undefined,
-    //     // })
-    //   })
-  }, [allowance, approveCallback, callback])
+  const [onPresentConfirmModal] = useModal(
+    <ConfirmDepositModal deposit={deposit} onConfirm={callback} />,
+    true,
+    true,
+    'confirmDepositModal',
+  )
 
   return (
     <DepositButton
-      onClick={handleDeposit}
-      disable={Number(price) < 10}
-      allowance={allowance === 3}
+      onClick={onPresentConfirmModal}
+      error={deposit.error}
+      approveCallback={approveCallback}
+      approval={approval}
       done={false}
       loading={false}
+      // @ts-ignore
+      disable={isNaN(price) || Number(price) < 10}
+      token={token.symbol}
+      amount={values?.[token.symbol]}
     />
   )
 }

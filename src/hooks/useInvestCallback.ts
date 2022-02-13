@@ -3,6 +3,9 @@ import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import isZero from '../utils/isZero'
 import { useInvestContract } from './useContract'
+import { calculateGasMargin } from 'utils'
+import useToast from './useToast'
+import compileErrorMessage from 'utils/compileErrorMessage'
 
 export enum InvestCallbackState {
   INVALID,
@@ -20,6 +23,7 @@ export function useInvestCallback(
 ): { state: InvestCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
   const contract = useInvestContract()
+  const { toastError } = useToast()
 
   const addTransaction = useTransactionAdder()
 
@@ -31,13 +35,10 @@ export function useInvestCallback(
 
     return {
       state: InvestCallbackState.VALID,
-      callback: async function onInvest() {
-        contract.estimateGas[methodName](...args, options)
+      callback: async () => {
+        const gasEstimate = await contract.estimateGas[methodName](...args, options)
           .then((gasEstimate) => {
-            return {
-              methodName,
-              gasEstimate,
-            }
+            return gasEstimate
           })
           .catch((gasError) => {
             console.error('Gas estimate failed, trying eth_call to extract error', methodName)
@@ -45,20 +46,28 @@ export function useInvestCallback(
             return contract.callStatic[methodName](...args, options)
               .then((result) => {
                 console.error('Unexpected successful call after failed estimate gas', methodName, gasError, result)
-                return { methodName, error: new Error('Unexpected issue with estimating the gas. Please try again.') }
+                return new Error('Unexpected issue with estimating the gas. Please try again.')
               })
               .catch((callError) => {
                 console.error('Call threw error', methodName, callError)
                 const reason: string = callError.reason || callError.data?.message || callError.message
                 const errorMessage = `The transaction cannot succeed due to error: ${
                   reason ?? 'Unknown error, check the logs'
-                }.`
+                }`
 
-                return { methodName, error: new Error(errorMessage) }
+                return new Error(errorMessage)
               })
           })
 
+        if (gasEstimate instanceof Error) {
+          toastError(...compileErrorMessage(gasEstimate))
+          // throw gasEstimate
+          return
+        }
+
+        console.log(gasEstimate)
         return contract[methodName](...args, {
+          gasLimit: calculateGasMargin(gasEstimate),
           ...(value && !isZero(value) ? { value, from: account } : { from: account }),
         })
           .then((response: any) => {
@@ -71,7 +80,7 @@ export function useInvestCallback(
                 summary: `SmartInvest: Withdraw ${stts} STTS(${dollar}$)`,
               })
             } else {
-              const inputAmount = args[args.length - 1].toSignificant(3)
+              const inputAmount = args[args.length - 1] || +value / 10 ** 18
               addTransaction(response, {
                 summary: `SmartInvest: Invest ${inputAmount} ${inputSymbol.toUpperCase()}`,
               })
@@ -92,5 +101,17 @@ export function useInvestCallback(
       },
       error: null,
     }
-  }, [library, account, chainId, contract, methodName, args, value, details, addTransaction])
+  }, [
+    value,
+    library,
+    account,
+    chainId,
+    methodName,
+    args,
+    contract,
+    toastError,
+    details?.stts,
+    details?.dollar,
+    addTransaction,
+  ])
 }

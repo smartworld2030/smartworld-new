@@ -3,6 +3,9 @@ import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import isZero from '../utils/isZero'
 import { usePoolContract } from './useContract'
+import useToast from './useToast'
+import compileErrorMessage from 'utils/compileErrorMessage'
+import { calculateGasMargin } from 'utils'
 
 export enum InvestCallbackState {
   INVALID,
@@ -20,6 +23,7 @@ export function usePoolCallback(
 ): { state: InvestCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
   const contract = usePoolContract()
+  const { toastError } = useToast()
 
   const addTransaction = useTransactionAdder()
 
@@ -31,13 +35,10 @@ export function usePoolCallback(
 
     return {
       state: InvestCallbackState.VALID,
-      callback: async function onInvest() {
-        contract.estimateGas[methodName](...args, options)
+      callback: async () => {
+        const gasEstimate = await contract.estimateGas[methodName](...args, options)
           .then((gasEstimate) => {
-            return {
-              methodName,
-              gasEstimate,
-            }
+            return gasEstimate
           })
           .catch((gasError) => {
             console.error('Gas estimate failed, trying eth_call to extract error', methodName)
@@ -45,7 +46,7 @@ export function usePoolCallback(
             return contract.callStatic[methodName](...args, options)
               .then((result) => {
                 console.error('Unexpected successful call after failed estimate gas', methodName, gasError, result)
-                return { methodName, error: new Error('Unexpected issue with estimating the gas. Please try again.') }
+                return new Error('Unexpected issue with estimating the gas. Please try again.')
               })
               .catch((callError) => {
                 console.error('Call threw error', methodName, callError)
@@ -54,11 +55,18 @@ export function usePoolCallback(
                   reason ?? 'Unknown error, check the logs'
                 }.`
 
-                return { methodName, error: new Error(errorMessage) }
+                return new Error(errorMessage)
               })
           })
 
+        if (gasEstimate instanceof Error) {
+          toastError(...compileErrorMessage(gasEstimate))
+          // throw gasEstimate
+          return
+        }
+        console.log(gasEstimate)
         return contract[methodName](...args, {
+          gasLimit: calculateGasMargin(gasEstimate),
           ...(value && !isZero(value) ? { value, from: account } : { from: account }),
         })
           .then((response: any) => {
@@ -96,5 +104,19 @@ export function usePoolCallback(
       },
       error: null,
     }
-  }, [value, library, account, chainId, contract, methodName, args, details, addTransaction])
+  }, [
+    value,
+    library,
+    account,
+    chainId,
+    contract,
+    methodName,
+    args,
+    toastError,
+    details.stts,
+    details.dollar,
+    details.lptoken,
+    details.bnb,
+    addTransaction,
+  ])
 }

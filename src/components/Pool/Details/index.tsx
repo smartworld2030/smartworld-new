@@ -4,23 +4,24 @@ import ReferralButton from '../../Layout/ReferralButton'
 import copy from 'copy-to-clipboard'
 import QRCode from 'react-qr-code'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
-import { useUserInvestInfo } from 'state/invest/hooks'
+import { useUserPoolInfo } from 'state/pool/hooks'
 import useToast from 'hooks/useToast'
 import useTheme from 'hooks/useTheme'
 import { ReverseFlex, MainComp, Skeleton } from '@smartworld-libs/uikit'
 
 export const MainDetailSection = ({ toggle }) => {
   const { account } = useActiveWeb3React()
-  const { totalAmount } = useUserInvestInfo()
+  const { liquidity } = useUserPoolInfo()
 
   const {
     theme: { colors },
   } = useTheme()
 
+  const [percent, setPercent] = useState(100)
   const { toastSuccess } = useToast()
   const [done, setDone] = useState(false)
   const { pathname } = useLocation()
-  const link = `${window.location.origin}${pathname}?ref=${account}`
+  const link = `${window.location.origin}${pathname}?percent=${percent}&ref=${account}`
 
   const copyHandler = () => {
     if (!done) {
@@ -45,12 +46,12 @@ export const MainDetailSection = ({ toggle }) => {
             size={200}
             value={link}
             bgColor={colors.background}
-            fgColor="white"
+            fgColor={colors.text}
             onClick={() => setDone(false)}
             style={{ position: 'relative' }}
           />
         ) : (
-          <ReferralButton width={90} onClick={copyHandler} disable={totalAmount === '0'} />
+          <ReferralButton width={90} onClick={copyHandler} setPercent={setPercent} disable={liquidity === '0'} slider />
         )}
       </MainComp>
     </ReverseFlex>

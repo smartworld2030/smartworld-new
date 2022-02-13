@@ -1,6 +1,14 @@
-import { IconButton } from '@smartworld-libs/uikit'
+import { CurrencyAmount } from '@pancakeswap/sdk'
+import { Button, Flex, IconButton, MainComp, Skeleton } from '@smartworld-libs/uikit'
+import ConnectWalletButton from 'components/ConnectWalletButton'
+import CircleLoader from 'components/Loader/CircleLoader'
+import { useTranslation } from 'contexts/Localization'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import { ApprovalState } from 'hooks/useApproveCallback'
 import useTheme from 'hooks/useTheme'
+import { useState, useEffect } from 'react'
 import styled, { keyframes } from 'styled-components'
+import { AutoRow } from './Row'
 
 export const DepositIcon = ({ done, loading, ...rest }) => (
   <svg viewBox="0 0 100 100" focusable="false" data-icon="check" opacity="0.6" {...rest}>
@@ -44,38 +52,120 @@ interface DepositButtonProps {
   done: boolean
   loading: boolean
   disable?: boolean
-  allowance?: boolean
+  amount?: CurrencyAmount
+  token?: string
+  error?: string
+  approval: ApprovalState
   onClick: () => void
+  approveCallback: () => Promise<void>
 }
 
-const DepositButton: React.FC<DepositButtonProps> = ({ done, loading, allowance = true, disable, onClick }) => {
+const DepositButton: React.FC<DepositButtonProps> = ({
+  done,
+  token,
+  loading,
+  disable,
+  approval,
+  error,
+  amount,
+  approveCallback,
+  onClick,
+}) => {
   const {
     theme: { colors },
   } = useTheme()
+  const { account } = useActiveWeb3React()
+
+  const { t } = useTranslation()
+
+  // check if user has gone through approval process, used to show two step buttons, reset on token change
+  const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
+
+  // mark when a user has submitted an approval, reset onTokenSelection for input field
+  useEffect(() => {
+    if (approval === ApprovalState.PENDING) {
+      setApprovalSubmitted(true)
+    }
+  }, [approval, approvalSubmitted])
+
+  // show approve flow when: no error on inputs, not approved or pending, or approved in current session
+  // never show if price impact is above threshold in non expert mode
+  const showApproveFlow =
+    !error &&
+    (approval === ApprovalState.NOT_APPROVED ||
+      approval === ApprovalState.PENDING ||
+      (approvalSubmitted && approval === ApprovalState.APPROVED))
 
   return (
-    <IconButton
-      scale="xl"
-      shape="circle"
-      fontSize={20}
-      onClick={disable ? undefined : onClick}
-      color={disable ? colors.disabled : colors.primary}
-      blur={false}
-      disabled={disable}
-      icon={(w) =>
-        allowance && (
-          <AnimatedRefIcon
-            width={w}
-            done={done}
-            loading={loading}
-            opacity={loading || done ? '1' : disable ? '1' : '0.6'}
-            fill={disable ? colors.disabled : colors.primary}
-          />
-        )
-      }
+    <MainComp
+      tip="Withdraw Circle"
+      flex={6}
+      justifyContent="space-around"
+      alignItems="center"
+      demo={<Skeleton size={250} />}
     >
-      APPROVE
-    </IconButton>
+      {!account ? (
+        <ConnectWalletButton shape="circle" />
+      ) : //  : !amount?.toSignificant() ? (
+      //   <Text color="textSubtle" mb="4px">
+      //     {t('Insufficient amount.')}
+      //   </Text>
+      // )
+      showApproveFlow ? (
+        <Flex justifyContent="space-between" width="30%">
+          <Button
+            shape="circle"
+            scale="lg"
+            width="64px"
+            variant={approval === ApprovalState.APPROVED ? 'success' : 'primary'}
+            onClick={approveCallback}
+            disabled={approval !== ApprovalState.NOT_APPROVED || approvalSubmitted}
+          >
+            {approval === ApprovalState.PENDING ? (
+              <AutoRow gap="6px" justify="center">
+                {t('Enabling')} <CircleLoader stroke="white" />
+              </AutoRow>
+            ) : approvalSubmitted && approval === ApprovalState.APPROVED ? (
+              t('Enabled')
+            ) : (
+              t('Enable %asset%', {
+                asset: token,
+              })
+            )}
+          </Button>
+          <Button
+            shape="circle"
+            scale="lg"
+            width="64px"
+            variant={error ? 'danger' : 'primary'}
+            onClick={onClick}
+            id="swap-button"
+            disabled={!!error || approval !== ApprovalState.APPROVED}
+          >
+            {t('Deposit')}
+          </Button>
+        </Flex>
+      ) : (
+        <IconButton
+          scale="xl"
+          shape="circle"
+          fontSize={20}
+          onClick={onClick}
+          color={disable ? colors.disabled : colors.primary}
+          blur={false}
+          disabled={disable}
+          icon={(w) => (
+            <AnimatedRefIcon
+              width={w}
+              done={done}
+              loading={loading}
+              opacity={loading || done ? '1' : disable ? '1' : '0.6'}
+              fill={disable ? colors.disabled : colors.primary}
+            />
+          )}
+        />
+      )}
+    </MainComp>
   )
 }
 export default DepositButton

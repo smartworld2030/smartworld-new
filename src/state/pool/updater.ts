@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import { useDispatch } from 'react-redux'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { updatePoolStates } from './actions'
@@ -14,9 +14,8 @@ import { getMulticallContract } from 'utils/contractHelpers'
 import useBlockNumber from 'state/application/hooks'
 import useIsWindowVisible from 'hooks/useIsWindowVisible'
 
-let cancelation = false
-
 export default function Updater(): null {
+  const cancelation = useRef(false)
   const dispatch = useDispatch()
   const [data, setData] = useState({})
   const { chainId, account } = useActiveWeb3React()
@@ -54,7 +53,7 @@ export default function Updater(): null {
 
   useEffect(() => {
     if (!latestBlockNumber || !windowVisible) return
-    cancelation = false
+    cancelation.current = false
     async function multiCallRequest() {
       const results = await calls.then(async (multicalls) => await multiCallMultipleData(multiContract, multicalls))
       const length = Number(results?.userDepositNumber)
@@ -71,21 +70,20 @@ export default function Updater(): null {
         }
         singleContractMultiCallRequest(multiContract, multicalls, false)
           .then((res) => {
-            if (!cancelation) setData({ ...results, userDepositDetails: res })
+            if (!cancelation.current) setData({ ...results, userDepositDetails: res })
           })
           .catch()
       } else {
-        if (!cancelation) setData(results)
+        if (!cancelation.current) setData(results)
       }
     }
     if (calls) {
       multiCallRequest()
     }
     return () => {
-      cancelation = true
+      cancelation.current = true
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [calls, windowVisible, latestBlockNumber])
+  }, [calls, account, windowVisible, latestBlockNumber, multiContract, poolContract.interface, poolContract.address])
 
   const compiledStates = useMemo(() => {
     if (!Object.keys(data).length) return undefined
@@ -105,7 +103,7 @@ export default function Updater(): null {
   const states = useDebounce(compiledStates, 500)
 
   useEffect(() => {
-    if (!chainId && cancelation) return
+    if (!chainId && cancelation.current) return
     dispatch(
       updatePoolStates({
         chainId,

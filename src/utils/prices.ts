@@ -1,4 +1,5 @@
 import { CurrencyAmount, Fraction, JSBI, Percent, TokenAmount, Trade } from '@pancakeswap/sdk'
+import { Deposit } from 'components/Swap/components/ConfirmDepositModal'
 import {
   BLOCKED_PRICE_IMPACT_NON_EXPERT,
   ALLOWED_PRICE_IMPACT_HIGH,
@@ -14,7 +15,9 @@ const ONE_HUNDRED_PERCENT = new Percent(JSBI.BigInt(10000), JSBI.BigInt(10000))
 const INPUT_FRACTION_AFTER_FEE = ONE_HUNDRED_PERCENT.subtract(BASE_FEE)
 
 // computes price breakdown for the trade
-export function computeTradePriceBreakdown(trade?: Trade | null): {
+export function computeTradePriceBreakdown(
+  trade?: Trade | null,
+): {
   priceImpactWithoutFee: Percent | undefined
   realizedLPFee: CurrencyAmount | undefined | null
 } {
@@ -48,6 +51,21 @@ export function computeTradePriceBreakdown(trade?: Trade | null): {
   return { priceImpactWithoutFee: priceImpactWithoutFeePercent, realizedLPFee: realizedLPFeeAmount }
 }
 
+function maximumAmountIn(tokenA, tokenB, slippageTolerance) {
+  const ONE = JSBI.BigInt(1)
+  const slippageTokenA = new Fraction(ONE).add(slippageTolerance).multiply(tokenA).quotient
+  const slippageTokenB = new Fraction(ONE).add(slippageTolerance).multiply(tokenB).quotient
+  return { tokenA: slippageTokenA, tokenB: slippageTokenB }
+}
+
+// computes the minimum amount out and maximum amount in for a trade given a user specified allowed slippage in bips
+export function computeDepositSlippageAdjustedAmounts(
+  deposit: Deposit | undefined,
+  allowedSlippage: number,
+): { [key in string]?: JSBI } {
+  const pct = basisPointsToPercent(allowedSlippage)
+  return maximumAmountIn(deposit?.tokenA, deposit?.tokenB, pct)
+}
 // computes the minimum amount out and maximum amount in for a trade given a user specified allowed slippage in bips
 export function computeSlippageAdjustedAmounts(
   trade: Trade | undefined,

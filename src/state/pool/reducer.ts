@@ -21,15 +21,17 @@ export interface PoolData {
     total: string
   }
   calculatePercent: string
-  users: {
-    id: string
-    liquidity: string
-    referrer: string
-    refAmounts: string
-    refPercent: string
-    latestWithdraw: string
-  }
+  users: PoolUser
 }
+export interface PoolUser {
+  id: string
+  liquidity: string
+  referrer: string
+  refAmounts: string
+  refPercent: string
+  latestWithdraw: string
+}
+
 const defaultPoolData = {
   maxPercent: '1000',
   calculateInterest: {

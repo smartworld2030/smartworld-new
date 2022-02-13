@@ -1,6 +1,9 @@
 import { CurrencyAmount, Token } from '@pancakeswap/sdk'
+import { useModal } from '@smartworld-libs/uikit'
+import ConfirmDepositModal from 'components/Swap/components/ConfirmDepositModal'
+import { useApproveCallback } from 'hooks/useApproveCallback'
+import { useInvestAddress } from 'hooks/useContract'
 import { useInvestDepositCallback } from 'hooks/useInvestDepositCallback'
-import { useCallback } from 'react'
 import DepositButton from '../../Layout/DepositButton'
 
 interface DepositInfoProps {
@@ -9,36 +12,34 @@ interface DepositInfoProps {
   price: string
 }
 
-const DepositInfo: React.FC<DepositInfoProps> = ({ price, ...rest }) => {
-  const { callback: swapCallback } = useInvestDepositCallback(rest)
+const DepositInfo: React.FC<DepositInfoProps> = ({ price, token, value }) => {
+  const [deposit, { callback }] = useInvestDepositCallback({ token, value, price })
 
-  const handleInvest = useCallback(() => {
-    if (!swapCallback) {
-      return
-    }
-    swapCallback()
-      .then((hash) => {
-        console.log(hash)
-        // setSwapState({
-        //   attemptingTxn: false,
-        //   tradeToConfirm,
-        //   swapErrorMessage: undefined,
-        //   txHash: hash,
-        // })
-      })
-      .catch((error) => {
-        console.log(error)
+  const spender = useInvestAddress()
 
-        // setSwapState({
-        //   attemptingTxn: false,
-        //   tradeToConfirm,
-        //   swapErrorMessage: error.message,
-        //   txHash: undefined,
-        // })
-      })
-  }, [swapCallback])
+  const [approval, approveCallback] = useApproveCallback(value, spender)
 
-  return <DepositButton onClick={handleInvest} disable={Number(price) < 100} done={false} loading={false} />
+  const [onPresentConfirmModal] = useModal(
+    <ConfirmDepositModal deposit={deposit} onConfirm={callback} />,
+    true,
+    true,
+    'confirmDepositModal',
+  )
+
+  return (
+    <DepositButton
+      onClick={onPresentConfirmModal}
+      error={deposit.error}
+      approveCallback={approveCallback}
+      approval={approval}
+      done={false}
+      loading={false}
+      // @ts-ignore
+      disable={isNaN(price) || Number(price) < 100}
+      token={token.symbol}
+      amount={value}
+    />
+  )
 }
 
 export default DepositInfo

@@ -1,5 +1,22 @@
 import { ChainId, Token } from '@pancakeswap/sdk'
 
+export const STTS: { [chainId: number]: Token } = {
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    '0x88469567A9e6b2daE2d8ea7D8C77872d9A0d43EC',
+    8,
+    'STTS',
+    'Smart World Token - Stock',
+  ),
+  [ChainId.TESTNET]: new Token(
+    ChainId.TESTNET,
+    '0xBFd0Ac6cD15712E0a697bDA40897CDc54b06D7Ef',
+    8,
+    'STTS',
+    'Smart World Token - Stock',
+  ),
+}
+
 export const CAKE: { [chainId: number]: Token } = {
   [ChainId.MAINNET]: new Token(
     ChainId.MAINNET,

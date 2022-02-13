@@ -1,11 +1,8 @@
 import { ChainId, Currency, currencyEquals, ETHER, Token } from '@pancakeswap/sdk'
 import { Text } from '@smartworld-libs/uikit'
 import styled from 'styled-components'
-import { useTranslation } from 'contexts/Localization'
-
 import { SUGGESTED_BASES } from '../../config/constants'
 import { AutoColumn } from '../Layout/Column'
-import QuestionHelper from '../QuestionHelper'
 import { AutoRow } from '../Layout/Row'
 import { CurrencyLogo } from '../Logo'
 
@@ -34,13 +31,12 @@ export default function CommonBases({
   selectedCurrency?: Currency | null
   onSelect: (currency: Currency) => void
 }) {
-  const { t } = useTranslation()
   return (
     <AutoColumn gap="md">
-      <AutoRow>
+      {/* <AutoRow>
         <Text fontSize="14px">{t('Common bases')}</Text>
         <QuestionHelper text={t('These tokens are commonly paired with other tokens.')} ml="4px" />
-      </AutoRow>
+      </AutoRow> */}
       <AutoRow gap="auto">
         <BaseWrapper
           onClick={() => {

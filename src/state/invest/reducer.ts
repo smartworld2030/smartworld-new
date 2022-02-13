@@ -16,16 +16,17 @@ export interface InvestData {
     satoshi: string
   }
   calculatePercent: string
-  users: {
-    referrer: string
-    refEndTime: string
-    refAmounts: string
-    refPercent: string
-    totalAmount: string
-    latestWithdraw: string
-  }
+  users: InvestUser
   userDepositNumber: string
   userDepositDetails: any
+}
+export interface InvestUser {
+  referrer: string
+  refEndTime: string
+  refAmounts: string
+  refPercent: string
+  totalAmount: string
+  latestWithdraw: string
 }
 
 const defaultInvestData = {

@@ -55,7 +55,6 @@ export default async function getTokenList(
       if (isLast) throw new Error(`Failed to download list ${listUrl}`)
       continue
     }
-
     const json = await response.json()
     if (!tokenListValidator(json)) {
       const validationErrors: string =

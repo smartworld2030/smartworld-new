@@ -1,4 +1,4 @@
-import { ButtonWithSlider } from '@smartworld-libs/uikit'
+import { ButtonWithSlider, IconButton } from '@smartworld-libs/uikit'
 import useTheme from 'hooks/useTheme'
 import { SVGProps } from 'react'
 import styled, { keyframes } from 'styled-components'
@@ -83,13 +83,25 @@ const AnimatedRefIcon = styled(RefIcon)`
 interface ReferralButtonProps {
   width: number
   disable?: boolean
+  slider?: boolean
+  setPercent?: (e: any) => void
   onClick: () => void
 }
 
-const ReferralButton: React.FC<ReferralButtonProps> = ({ disable, onClick }) => {
-  return (
+const ReferralButton: React.FC<ReferralButtonProps> = ({ disable, slider, setPercent, onClick }) => {
+  return slider ? (
     <ButtonWithSlider
       scale="xl"
+      fontSize={15}
+      icon={(w) => <AnimatedRefIcon width={w} fontSize={8} />}
+      onClick={onClick}
+      onInput={setPercent}
+      disabled={disable}
+    />
+  ) : (
+    <IconButton
+      scale="xl"
+      blur={disable}
       fontSize={15}
       icon={(w) => <AnimatedRefIcon width={w} fontSize={8} />}
       onClick={onClick}

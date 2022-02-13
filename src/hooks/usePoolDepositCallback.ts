@@ -1,6 +1,9 @@
 import { ValueType } from 'components/Pool/Deposit'
+import { Deposit } from 'components/Swap/components/ConfirmDepositModal'
+import { ADMIN_ADDRESS } from 'config/constants'
 import { useUserPoolInfo } from 'state/pool/hooks'
 import { useUserSlippageTolerance } from 'state/user/hooks'
+import { calculateSlippageAmount, isAddress } from 'utils'
 import { InvestCallbackState } from './useInvestCallback'
 import { usePoolCallback } from './usePoolCallback'
 import useQuery from './useQuery'
@@ -8,6 +11,7 @@ import useTransactionDeadline from './useTransactionDeadline'
 
 interface DepositDetails {
   token: string
+  price: string
   values: ValueType
 }
 
@@ -16,30 +20,56 @@ interface DepositDetails {
 export function usePoolDepositCallback({
   token,
   values,
-}: DepositDetails): { state: InvestCallbackState; callback: null | (() => Promise<string>); error: string | null } {
-  const ref = useQuery().get('ref')
-  const refPercent = +useQuery().get('percent') * 100
+  price,
+}: DepositDetails): [
+  Deposit,
+  { state: InvestCallbackState; callback: null | (() => Promise<string>); error: string | null },
+] {
+  const referrer = useQuery().get('ref')
+  const refPercent = useQuery().get('percent')
 
-  const [userSlippageTolerance] = useUserSlippageTolerance()
+  const [slippage] = useUserSlippageTolerance()
   const deadline = useTransactionDeadline()
   const user = useUserPoolInfo()
-
-  const decimalValue = (+values[token] * 10 ** (token === 'STTS' ? 8 : 18)).toFixed().toString()
-  const bnbValue = (+values.BNB * 10 ** 18).toFixed().toString()
-
-  const investToken = token === 'LPTOKEN' ? 'LP' : ''
   const newUser = user.referrer === '0'
 
-  const methodName = newUser ? 'freeze' + investToken : 'updateFreeze' + investToken
+  const decimalValue = values[token]?.numerator.toString()
+  const bnbValue = values.BNB?.numerator.toString()
+  const reward = {
+    value: values[token]?.multiply('5').divide('10000').toSignificant(2),
+    period: 'Daily',
+    symbol: 'STTS',
+  }
 
-  const parameters: any[] = newUser ? [ref, refPercent, decimalValue] : [decimalValue]
+  const investToken = token === 'LPTOKEN' ? 'LP' : ''
 
-  if (token === 'STTS') {
-    const sttsWithSlippage = ((+decimalValue * userSlippageTolerance) / 1000).toFixed().toString()
-    const bnbWithSlippage = ((+bnbValue * userSlippageTolerance) / 1000).toFixed().toString()
+  const method = newUser ? 'freeze' + investToken : 'updateFreeze' + investToken
+
+  const ref = isAddress(referrer) || ADMIN_ADDRESS
+  const per = +refPercent * 100 || 10000
+  const parameters: any[] = newUser ? [ref, per, decimalValue] : [decimalValue]
+
+  if (token === 'STTS' && values.STTS && values.BNB) {
+    price = (+price * 2).toFixed(2)
+    const sttsWithSlippage = calculateSlippageAmount(values.STTS, slippage)[0].toString()
+    const bnbWithSlippage = calculateSlippageAmount(values.BNB, slippage)[0].toString()
     parameters.push(sttsWithSlippage, bnbWithSlippage, deadline)
   }
-  const details = { stts: decimalValue, lptoken: decimalValue, bnb: bnbValue, dollar: '10000' }
+  const details = { stts: decimalValue, lptoken: decimalValue, bnb: bnbValue, dollar: price }
 
-  return usePoolCallback(methodName, parameters, token === 'STTS' ? bnbValue : undefined, details)
+  const deposit: Deposit = {
+    referrer,
+    refPercent,
+    newUser,
+    price,
+    deadline,
+    method,
+    tokenA: values[token],
+    tokenB: values.BNB,
+    slippage,
+    user,
+    reward,
+  }
+  console.log(method, parameters, token === 'STTS' ? bnbValue : undefined, details)
+  return [deposit, usePoolCallback(method, parameters, token === 'STTS' ? bnbValue : undefined, details)]
 }

@@ -1,4 +1,4 @@
-import React, { useRef, RefObject, useCallback, useState, useMemo } from 'react'
+import { useRef, RefObject, useCallback, useState, useMemo } from 'react'
 import { Token } from '@pancakeswap/sdk'
 import { Text, Button, CloseIcon, IconButton, LinkExternal, Input, Link } from '@smartworld-libs/uikit'
 import styled from 'styled-components'
@@ -89,6 +89,7 @@ export default function ManageTokens({
   }, [userAddedTokens, chainId, removeToken])
 
   const isAddressValid = searchQuery === '' || isAddress(searchQuery)
+  console.log(tokenList)
 
   return (
     <Wrapper>

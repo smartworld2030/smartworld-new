@@ -1,5 +1,6 @@
 import { PolygonButton } from '@smartworld-libs/uikit'
 import { Scale } from '@smartworld-libs/uikit/dist/components/Button/types'
+import useTheme from 'hooks/useTheme'
 
 interface HeadCircleProps {
   positionX: number
@@ -24,10 +25,14 @@ export const HeadCircle: React.FC<HeadCircleProps> = ({
   link,
   icon,
 }) => {
+  const {
+    theme: { colors },
+  } = useTheme()
   return (
     <foreignObject x={positionX} y={positionY} width="1" height="1" overflow="visible">
       <PolygonButton
-        color={active ? undefined : 'white'}
+        color={active ? undefined : colors.disabled}
+        shadow
         scale={size}
         onClick={onClick}
         // @ts-ignore

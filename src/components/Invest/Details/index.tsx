@@ -34,7 +34,7 @@ export const MainDetailSection = ({ toggle }) => {
     <ReverseFlex>
       <MainComp
         tip="Long Press Button"
-        flex={done ? (toggle ? 9 : 6) : 5.5}
+        flex={done ? (toggle ? 8 : 6) : 5.5}
         justifyContent="space-around"
         alignItems="center"
         tipSize={2}
@@ -45,7 +45,7 @@ export const MainDetailSection = ({ toggle }) => {
             size={200}
             value={link}
             bgColor={colors.background}
-            fgColor="white"
+            fgColor={colors.text}
             onClick={() => setDone(false)}
             style={{ position: 'relative' }}
           />

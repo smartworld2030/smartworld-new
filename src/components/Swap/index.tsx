@@ -10,7 +10,7 @@ import {
   useWindowSize,
   MainComp,
   Skeleton,
-  LongPressButton,
+  PayButton,
 } from '@smartworld-libs/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/UnsupportedCurrencyFooter'
@@ -341,34 +341,37 @@ export default function Swap() {
     </AutoColumn>
   )
 
-  const SwapButton = () => (
-    <LongPressButton
-      shape="circle"
-      scale="lg"
-      variant={isValid && priceImpactSeverity > 2 && !swapCallbackError ? 'danger' : 'primary'}
-      onClick={() => {
-        if (isExpertMode) {
-          handleSwap()
-        } else {
-          setSwapState({
-            tradeToConfirm: trade,
-            attemptingTxn: false,
-            swapErrorMessage: undefined,
-            txHash: undefined,
-          })
-          onPresentConfirmModal()
-        }
-      }}
-      disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
-    >
-      {swapInputError ||
-        (priceImpactSeverity > 3 && !isExpertMode
-          ? `Price Impact Too High`
-          : priceImpactSeverity > 2
-          ? t('Swap Anyway')
-          : t('Swap'))}
-    </LongPressButton>
-  )
+  const SwapButton = () =>
+    swapInputError || (priceImpactSeverity > 3 && !isExpertMode) ? (
+      <Text color="textSubtle" mb="4px">
+        {swapInputError}
+      </Text>
+    ) : priceImpactSeverity > 2 ? (
+      <Text color="textSubtle" mb="4px">
+        {t('Price Impact Too High')}
+        {t('Swap Anyway')}
+      </Text>
+    ) : (
+      <PayButton
+        shape="circle"
+        scale="xl"
+        variant={isValid && priceImpactSeverity > 2 && !swapCallbackError ? 'danger' : 'primary'}
+        onClick={() => {
+          if (isExpertMode) {
+            handleSwap()
+          } else {
+            setSwapState({
+              tradeToConfirm: trade,
+              attemptingTxn: false,
+              swapErrorMessage: undefined,
+              txHash: undefined,
+            })
+            onPresentConfirmModal()
+          }
+        }}
+        disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
+      />
+    )
 
   return (
     <>
@@ -392,6 +395,7 @@ export default function Swap() {
           hideBalance
           id="swap-currency-input"
           size={width / 2.5}
+          showCommonBases
         />
         <Flex justifyContent="center" flexDirection="column">
           <Button
@@ -420,6 +424,7 @@ export default function Swap() {
           maxTokenCanBuy={maxTokenCanBuy}
           id="swap-currency-output"
           size={width / 2.5}
+          showCommonBases
         />
       </MainComp>
       <MainComp
@@ -503,17 +508,6 @@ export default function Swap() {
         ) : (
           <SwapButton />
         )}
-      </MainComp>
-      <MainComp
-        tip="Withdraw Circle"
-        flex={Boolean(trade) ? 6 : 2}
-        justifyContent="space-around"
-        flexDirection="column"
-        alignItems="center"
-        tipSize={2}
-        demo={<Skeleton size={250} />}
-      >
-        <div>{!showWrap && <Prices />}</div>
       </MainComp>
     </>
   )

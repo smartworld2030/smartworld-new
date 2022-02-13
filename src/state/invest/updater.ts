@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import { useDispatch } from 'react-redux'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { updateInvestStates } from './actions'
@@ -14,9 +14,8 @@ import { getMulticallContract } from 'utils/contractHelpers'
 import useBlockNumber from 'state/application/hooks'
 import useIsWindowVisible from 'hooks/useIsWindowVisible'
 
-let cancelation = false
-
 export default function Updater(): number {
+  const cancelation = useRef(false)
   const dispatch = useDispatch()
   const [data, setData] = useState({})
   const { chainId, account } = useActiveWeb3React()
@@ -48,7 +47,7 @@ export default function Updater(): number {
 
   useEffect(() => {
     if (!latestBlockNumber || !windowVisible) return
-    cancelation = false
+    cancelation.current = false
     async function multiCallRequest() {
       const results = await calls.then(async (multicalls) => await multiCallMultipleData(multiContract, multicalls))
       const length = Number(results?.userDepositNumber)
@@ -69,20 +68,27 @@ export default function Updater(): number {
         singleContractMultiCallRequest(multiContract, multicalls, false).then((res) => {
           const [stts, ...rest] = res
           results.calculateInterest = { ...results.calculateInterest, ...{ stts } }
-          if (!cancelation) setData({ ...results, userDepositDetails: rest })
+          if (!cancelation.current) setData({ ...results, userDepositDetails: rest })
         })
       } else {
-        if (!cancelation) setData(results)
+        if (!cancelation.current) setData(results)
       }
     }
     if (calls) {
       multiCallRequest()
     }
     return () => {
-      cancelation = true
+      cancelation.current = true
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [calls, windowVisible, latestBlockNumber])
+  }, [
+    calls,
+    windowVisible,
+    latestBlockNumber,
+    multiContract,
+    investContract.interface,
+    investContract.address,
+    account,
+  ])
 
   const compiledStates = useMemo(() => {
     if (!Object.keys(data).length) return undefined
@@ -102,7 +108,7 @@ export default function Updater(): number {
   const states = useDebounce(compiledStates, 500)
 
   useEffect(() => {
-    if (!chainId && cancelation) return
+    if (!chainId && cancelation.current) return
     dispatch(
       updateInvestStates({
         chainId,

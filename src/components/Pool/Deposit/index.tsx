@@ -11,6 +11,12 @@ import DepositInfo from './DepositInfo'
 
 export const neededToken = ['STTS', 'BNB', 'LPTOKEN']
 
+export enum TokenIndex {
+  STTS = 1,
+  LPTOKEN = 1,
+  BNB = 2,
+}
+
 export type ValueType = {
   [x: string]: CurrencyAmount | undefined
 }
@@ -30,16 +36,18 @@ export const MainDepositSection = ({ toggle }) => {
     ...balances,
   })
 
-  const pairSpliter = () => pairs.split('-').map((token) => token)
+  const pairSpliter = () => pairs.split('-')
 
   const token1 = pairSpliter()[0]
   const token2 = pairSpliter()[1]
 
-  const conversionUnit = (token: string) => (editingUnit === token1 ? 'USD' : token)
+  const conversionUnit = (token: string) => {
+    return editingUnit === token1 ? 'USD' : token
+  }
 
   useEffect(() => {
     setEditingUnit(token1)
-    setInputs(['', ''])
+    setInputs(['', '', ''])
     setValues((prev) => ({ ...prev, [token1]: undefined }))
     return () => {
       setValues((prev) => ({ ...prev, [token1]: undefined }))
@@ -47,8 +55,7 @@ export const MainDepositSection = ({ toggle }) => {
   }, [token1])
 
   const currencyValues = (token: string) => {
-    const element = conversionUnit(token) === 'USD' ? 'USD' : token
-
+    let element = conversionUnit(token) === 'USD' ? 'USD' : token
     return (
       '~' +
       (element === 'USD'
@@ -56,7 +63,7 @@ export const MainDepositSection = ({ toggle }) => {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })
-        : values[element]?.toSignificant(4))
+        : values[token]?.toSignificant() || '0')
     )
   }
 
@@ -64,46 +71,46 @@ export const MainDepositSection = ({ toggle }) => {
     const inputAsFloat = parseFloat(input)
     if (editingUnit !== 'USD') {
       if (token === 'LPTOKEN') {
-        const stts = +lptoken.stts * (+input / 10 ** 8)
-        setValues((prev) => ({
-          ...prev,
-          [token]: tryParseAmount(input, tokens[editingUnit]),
-        }))
-        setInputs([`${stts * 2}`, input])
+        const stts = +lptoken.stts * (inputAsFloat / 10 ** 8)
+        const USD = (stts * dollar[token1]).toFixed(2)
+
+        setValues({ [token]: tryParseAmount(input, tokens[token]) })
+        setInputs([USD, input])
       } else {
         const USD = Number.isNaN(input) ? '0' : `${+input * dollar[token]}`
-        const value1 = `${+USD / dollar[token1]}`
-        const value2 = `${+USD / dollar[token2]}`
+        const v1 = `${+USD / dollar[token1]}`
+        const v2 = `${+USD / dollar[token2]}`
+        const value1 = tryParseAmount(v1, tokens[token1])
+        const value2 = tryParseAmount(v2, tokens[token2])
         setValues((prev) => ({
           ...prev,
-          [token]: tryParseAmount(input, tokens[editingUnit]),
+          [token1]: value1,
+          [token2]: value2,
         }))
-        setInputs([`${inputAsFloat * dollar[token]}`, value1, value2])
+        if (TokenIndex[token] === 1) return setInputs([USD, input, value2?.toSignificant()])
+        return setInputs([USD, value1?.toSignificant(), input])
       }
     } else {
-      const value1 = `${+inputAsFloat / dollar[token1]}`
-      const value2 = `${+inputAsFloat / dollar[token2]}`
-      setValues((prev) => ({
-        ...prev,
-        [token1]: tryParseAmount(value1, tokens[token]),
-        [token2]: tryParseAmount(value2, tokens[token]),
-      }))
-      setInputs([input, value1, value2])
+      if (token === 'LPTOKEN') {
+        const stts = inputAsFloat / dollar[token1]
+        const value = ((stts * 10 ** 8) / +lptoken.stts).toString()
+        setValues({ [token]: tryParseAmount(value, tokens[token]) })
+        setInputs([input, value])
+      } else {
+        const value1 = `${inputAsFloat / dollar[token1]}`
+        const value2 = `${inputAsFloat / dollar[token2]}`
+        setValues((prev) => ({
+          ...prev,
+          [token1]: tryParseAmount(value1, tokens[token1]),
+          [token2]: tryParseAmount(value2, tokens[token2]),
+        }))
+        setInputs([input, value1, value2])
+      }
     }
   }
 
   const switchEditingUnits = () => {
-    setValues((prev) => ({ ...prev, [token1]: values[token1] }))
     setEditingUnit(conversionUnit(token1))
-  }
-
-  const totalValue = (token) => {
-    const input = tokens?.[token]
-    if (editingUnit !== 'USD') {
-      return input
-    } else {
-      return Number.isNaN(input) ? '0' : `${input[0] * dollar[token]}`
-    }
   }
 
   const getUnit = (token) => {
@@ -114,12 +121,17 @@ export const MainDepositSection = ({ toggle }) => {
     }
   }
 
-  const balanceValues = (t: string) => {
-    const inputAsFloat = balances?.[t]?.toSignificant()
+  const balanceValues = (token: string): string => {
+    const inputAsFloat = balances?.[token]?.toSignificant()
     if (editingUnit !== 'USD') {
-      return balances?.[t]?.toSignificant()
+      return balances?.[token]?.toSignificant()
     } else {
-      return Number.isNaN(inputAsFloat) ? '0' : `${inputAsFloat * dollar[t]}`
+      if (token === 'LPTOKEN') {
+        const stts = +lptoken.stts * (inputAsFloat / 10 ** 8)
+        const usd = stts * dollar[token1]
+        return Number.isNaN(usd) ? '0' : `${usd}`
+      }
+      return Number.isNaN(inputAsFloat) ? '0' : `${inputAsFloat * dollar[token]}`
     }
   }
 
@@ -151,9 +163,9 @@ export const MainDepositSection = ({ toggle }) => {
             key={i}
             value={editingUnit === 'USD' ? inputs[0] : inputs[1 + i]}
             maxValue={balanceValues(token)}
+            decimals={editingUnit === 'USD' ? 2 : tokens[token].decimals}
             onUserInput={(input) => handleInputChange(input, token)}
             unit={getUnit(token)}
-            decimals={token === 'STTS' ? 8 : 18}
             currencyValue={currencyValues(token)}
             currencyUnit={conversionUnit(token)}
             placeholder={balanceValues(token)}
@@ -172,7 +184,7 @@ export const MainDepositSection = ({ toggle }) => {
         tipSize={3}
         demo={<Skeleton size={80} />}
       >
-        <DepositInfo token={tokens[token1]} values={values} price={inputs[0]} />
+        <DepositInfo token={tokens[token1]} values={values} price={inputs[0]} error="" />
       </MainComp>
     </ReverseFlex>
   )
