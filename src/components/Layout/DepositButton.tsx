@@ -1,5 +1,5 @@
 import { CurrencyAmount } from '@pancakeswap/sdk'
-import { Button, Flex, IconButton, MainComp, Skeleton } from '@smartworld-libs/uikit'
+import { Button, Flex, IconButton, MainComponent, Skeleton } from '@smartworld-libs/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import CircleLoader from 'components/Loader/CircleLoader'
 import { useTranslation } from 'contexts/Localization'
@@ -97,7 +97,7 @@ const DepositButton: React.FC<DepositButtonProps> = ({
       (approvalSubmitted && approval === ApprovalState.APPROVED))
 
   return (
-    <MainComp
+    <MainComponent
       tip="Withdraw Circle"
       flex={6}
       justifyContent="space-around"
@@ -165,7 +165,7 @@ const DepositButton: React.FC<DepositButtonProps> = ({
           )}
         />
       )}
-    </MainComp>
+    </MainComponent>
   )
 }
 export default DepositButton

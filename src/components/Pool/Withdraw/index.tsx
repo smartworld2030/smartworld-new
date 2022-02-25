@@ -1,5 +1,5 @@
 import { useUserPoolDetails } from 'state/pool/hooks'
-import { WithdrawCircle, Flex, Text, TooltipText, Skeleton, MainComp, ReverseFlex } from '@smartworld-libs/uikit'
+import { WithdrawCircle, Flex, Text, TooltipText, Skeleton, MainComponent, ReverseFlex } from '@smartworld-libs/uikit'
 import { useCallback } from 'react'
 import { usePoolCallback } from 'hooks/usePoolCallback'
 import { useBankDollars } from 'state/bank/hooks'
@@ -51,7 +51,7 @@ const MainWithdrawSection = ({ toggle }) => {
 
   return (
     <ReverseFlex>
-      <MainComp
+      <MainComponent
         tip="Withdraw Circle"
         flex={toggle ? 9 : 8}
         justifyContent="space-around"
@@ -79,7 +79,7 @@ const MainWithdrawSection = ({ toggle }) => {
           size={195}
           onClick={dollar > 0 ? () => handleInvest() : undefined}
         />
-      </MainComp>
+      </MainComponent>
     </ReverseFlex>
   )
 }

@@ -21,8 +21,8 @@ const Swap = lazy(() => import('components/Swap'))
 
 const App = () => {
   const { toasts, remove } = useToast()
-  usePollBlockNumber()
-  useEagerConnect()
+  // usePollBlockNumber()
+  // useEagerConnect()
 
   return (
     <RelativeFlex>
@@ -47,30 +47,38 @@ const App = () => {
               checked ? <CogIcon onClick={onChange} /> : <CogIcon onClick={onChange} />
             }
             right={useMemo(
-              () => ({ toggle: { showRight }, responsiveSize }) => (
-                <AnimatedTipFlex
-                  {...responsiveSize(12, showRight)}
-                  flexDirection="column"
-                  justifyContent="space-around"
-                >
-                  <WalletModal initialView={WalletView.WALLET_INFO} onDismiss={() => console.log} />
-                </AnimatedTipFlex>
-              ),
+              () =>
+                ({ toggle: { showRight }, responsiveSize }) =>
+                  (
+                    <AnimatedTipFlex
+                      {...responsiveSize(12, showRight)}
+                      flexDirection="column"
+                      justifyContent="space-around"
+                    >
+                      <WalletModal initialView={WalletView.WALLET_INFO} onDismiss={() => console.log} />
+                    </AnimatedTipFlex>
+                  ),
               [],
             )}
             left={useMemo(
-              () => ({ toggle: { showLeft }, responsiveSize, tipChanger }) => (
-                <AnimatedTipFlex {...responsiveSize(4, showLeft)} flexDirection="column" justifyContent="space-around">
-                  <GlobalMenuModal title="Setting" toggleHandler={tipChanger} />
-                </AnimatedTipFlex>
-              ),
+              () =>
+                ({ toggle: { showLeft }, responsiveSize, tipChanger }) =>
+                  (
+                    <AnimatedTipFlex
+                      {...responsiveSize(12, showLeft)}
+                      flexDirection="column"
+                      justifyContent="space-around"
+                    >
+                      <GlobalMenuModal title="Setting" toggleHandler={tipChanger} />
+                    </AnimatedTipFlex>
+                  ),
               [],
             )}
           >
             <Route exact strict path={['/invest', '/investment']} component={Investment} />
             <Route exact strict path="/pool" component={MainPool} />
             <Route exact strict path="/swap" component={Swap} />
-            <Route exact strict path="/home" component={Home} />
+            <Route exact strict path={['/home', '/home/:id']} component={Home} />
           </MainSection>
         </Switch>
         <Route exact path="/">

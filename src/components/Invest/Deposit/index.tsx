@@ -1,5 +1,5 @@
 import { CurrencyAmount } from '@pancakeswap/sdk'
-import { BalanceInput, ReverseFlex, MainComp, Skeleton } from '@smartworld-libs/uikit'
+import { BalanceInput, ReverseFlex, MainComponent, Skeleton } from '@smartworld-libs/uikit'
 import { useFilteredProjectToken } from 'hooks/Tokens'
 import { useState, useEffect } from 'react'
 import { useBankDollars } from 'state/bank/hooks'
@@ -86,7 +86,7 @@ export const MainDepositSection = ({ toggle }) => {
 
   return (
     <ReverseFlex>
-      <MainComp
+      <MainComponent
         tip="Token Selection"
         tipSize={2}
         flex={toggle ? 6 : 4}
@@ -107,8 +107,8 @@ export const MainDepositSection = ({ toggle }) => {
             info={minimumAmount(t)}
           />
         ))}
-      </MainComp>
-      <MainComp
+      </MainComponent>
+      <MainComponent
         tip="Balance Input"
         flex={toggle ? 12 : 9}
         tipSize={3}
@@ -130,8 +130,8 @@ export const MainDepositSection = ({ toggle }) => {
           disabled={balanceValues() === '0'}
           switchEditingUnits={switchEditingUnits}
         />
-      </MainComp>
-      <MainComp
+      </MainComponent>
+      <MainComponent
         tip="Long Press Button"
         flex={toggle ? 8 : 5}
         justifyContent="space-around"
@@ -140,7 +140,7 @@ export const MainDepositSection = ({ toggle }) => {
         demo={<Skeleton size={80} />}
       >
         <DepositInfo token={tokens[token]} value={values[token]} price={inputs[0]} />
-      </MainComp>
+      </MainComponent>
     </ReverseFlex>
   )
 }

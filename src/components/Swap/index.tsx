@@ -8,7 +8,7 @@ import {
   useModal,
   Flex,
   useWindowSize,
-  MainComp,
+  MainComponent,
   Skeleton,
   PayButton,
 } from '@smartworld-libs/uikit'
@@ -21,7 +21,7 @@ import { getAddress } from 'utils/addressHelpers'
 import { GreyCard } from 'components/Card'
 import { AutoColumn } from 'components/Layout/Column'
 import ConfirmSwapModal from './components/ConfirmSwapModal'
-import CurrencyInputPanel from 'components/CurrencyInputPanel'
+import CurrencyInputPanel from 'components/CurrencyInputPanel/NewInput'
 import { AutoRow, RowBetween } from 'components/Layout/Row'
 import AdvancedSwapDetailsDropdown from './components/AdvancedSwapDetailsDropdown'
 import confirmPriceImpactWithoutFee from './components/confirmPriceImpactWithoutFee'
@@ -91,11 +91,11 @@ export default function Swap() {
     inputError: swapInputError,
   } = useDerivedSwapInfo()
 
-  const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
-    currencies[Field.INPUT],
-    currencies[Field.OUTPUT],
-    typedValue,
-  )
+  const {
+    wrapType,
+    execute: onWrap,
+    inputError: wrapInputError,
+  } = useWrapCallback(currencies[Field.INPUT], currencies[Field.OUTPUT], typedValue)
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
   const trade = showWrap ? undefined : v2Trade
 
@@ -375,7 +375,8 @@ export default function Swap() {
 
   return (
     <>
-      <MainComp
+      <MainComponent
+        overflow="visible"
         tip="Withdraw Circle"
         flex={7}
         justifyContent="space-around"
@@ -426,8 +427,9 @@ export default function Swap() {
           size={width / 2.5}
           showCommonBases
         />
-      </MainComp>
-      <MainComp
+      </MainComponent>
+      <MainComponent
+        overflow="visible"
         tip="Withdraw Circle"
         flex={6}
         justifyContent="space-around"
@@ -508,7 +510,7 @@ export default function Swap() {
         ) : (
           <SwapButton />
         )}
-      </MainComp>
+      </MainComponent>
     </>
   )
 }

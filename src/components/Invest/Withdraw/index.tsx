@@ -1,5 +1,5 @@
 import { useUserInvestDetails } from 'state/invest/hooks'
-import { WithdrawCircle, Flex, Text, TooltipText, Skeleton, MainComp, ReverseFlex } from '@smartworld-libs/uikit'
+import { WithdrawCircle, Flex, Text, TooltipText, Skeleton, MainComponent, ReverseFlex } from '@smartworld-libs/uikit'
 import { useCallback } from 'react'
 import { useInvestCallback } from 'hooks/useInvestCallback'
 
@@ -48,7 +48,7 @@ const MainWithdrawSection = ({ toggle }) => {
 
   return (
     <ReverseFlex>
-      <MainComp
+      <MainComponent
         tip="Withdraw Circle"
         flex={toggle ? 12 : 9}
         justifyContent="space-around"
@@ -76,7 +76,7 @@ const MainWithdrawSection = ({ toggle }) => {
           size={250}
           onClick={dollar > 0 ? () => handleInvest() : undefined}
         />
-      </MainComp>
+      </MainComponent>
     </ReverseFlex>
   )
 }

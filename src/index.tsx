@@ -20,8 +20,6 @@ import { RefreshContextProvider } from 'contexts/RefreshContext'
 import { ToastsProvider } from 'contexts/ToastsContext'
 import { BrowserRouter as Router } from 'react-router-dom'
 
-import { Test } from 'Test'
-
 function Updaters() {
   return (
     <>

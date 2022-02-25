@@ -7,7 +7,7 @@ import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useUserPoolInfo } from 'state/pool/hooks'
 import useToast from 'hooks/useToast'
 import useTheme from 'hooks/useTheme'
-import { ReverseFlex, MainComp, Skeleton } from '@smartworld-libs/uikit'
+import { ReverseFlex, MainComponent, Skeleton } from '@smartworld-libs/uikit'
 
 export const MainDetailSection = ({ toggle }) => {
   const { account } = useActiveWeb3React()
@@ -33,7 +33,7 @@ export const MainDetailSection = ({ toggle }) => {
 
   return (
     <ReverseFlex>
-      <MainComp
+      <MainComponent
         tip="Long Press Button"
         flex={done ? (toggle ? 8 : 6) : 5.5}
         justifyContent="space-around"
@@ -53,7 +53,7 @@ export const MainDetailSection = ({ toggle }) => {
         ) : (
           <ReferralButton width={90} onClick={copyHandler} setPercent={setPercent} disable={liquidity === '0'} slider />
         )}
-      </MainComp>
+      </MainComponent>
     </ReverseFlex>
   )
 }
