@@ -44,7 +44,6 @@ export default function CurrencyInputPanel({
   maxTokenCanBuy,
   showCommonBases,
 }: CurrencyInputPanelProps) {
-  const [, refresh] = useState<number>(0)
   const srcs = useCurrencyLogoSource({ currency })
   const { account } = useActiveWeb3React()
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
@@ -74,7 +73,6 @@ export default function CurrencyInputPanel({
         })
       : '0.00'
 
-  const src: string | undefined = srcs.find((s) => !BAD_SRCS[s])
   return (
     <BalanceInput
       value={value}
@@ -90,11 +88,7 @@ export default function CurrencyInputPanel({
       size={size > 200 ? 200 : size}
       margin={'auto'}
       disabled={hideInput}
-      image={src}
-      onImageError={() => {
-        if (src) BAD_SRCS[src] = true
-        refresh((i) => i + 1)
-      }}
+      image={srcs}
       logo={currency ? <CurrencyLogo currency={currency} size="12px" /> : <CurrencyLogo size="12px" />}
       onLogoClick={() => {
         if (!disableCurrencySelect) {

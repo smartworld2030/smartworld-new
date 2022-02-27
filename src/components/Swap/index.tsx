@@ -11,6 +11,7 @@ import {
   MainComponent,
   Skeleton,
   PayButton,
+  IconButton,
 } from '@smartworld-libs/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/UnsupportedCurrencyFooter'
@@ -399,20 +400,22 @@ export default function Swap() {
           showCommonBases
         />
         <Flex justifyContent="center" flexDirection="column">
-          <Button
-            // @ts-ignore
+          <IconButton
+            blur={false}
             scale="sm"
             shape="circle"
             onClick={() => {
               setApprovalSubmitted(false) // reset 2 step UI for approvals
               onSwitchTokens()
             }}
-          >
-            <ArrowDownIcon
-              style={{ transform: 'rotate(270deg)' }}
-              color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? 'primary' : 'text'}
-            />
-          </Button>
+            icon={(w) => (
+              <ArrowDownIcon
+                width={w - 10}
+                style={{ transform: 'rotate(270deg)' }}
+                color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? 'primary' : 'text'}
+              />
+            )}
+          />
         </Flex>
         <CurrencyInputPanel
           value={formattedAmounts[Field.OUTPUT]}

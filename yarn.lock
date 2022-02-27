@@ -2382,10 +2382,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@smartworld-libs/uikit@^0.61.3":
-  version "0.61.3"
-  resolved "https://registry.yarnpkg.com/@smartworld-libs/uikit/-/uikit-0.61.3.tgz#c27d46ff6e12abfa7751f872d7ff568a7c72760f"
-  integrity sha512-l1i+RFnBqSrU6bNm+bTqvT9KVuvZpfflts/ALg4FzMZoxACltTLbjWXTG4jnx/6sN/SpyVaTSp4A7Pp0wpzdug==
+"@smartworld-libs/uikit@^0.62.1":
+  version "0.62.1"
+  resolved "https://registry.yarnpkg.com/@smartworld-libs/uikit/-/uikit-0.62.1.tgz#767488f4e67cfa85b6e1fc46df2bf4bf4c0b8489"
+  integrity sha512-Owyxucw7ZJL94yF2XrGxpZT9ZE/Tt11wDRb0QbSMb9D4y7sA79fafbIqV1k5Kj2GInenz6emf2rC195TIUZ3gw==
   dependencies:
     "@popperjs/core" "^2.9.2"
     "@react-spring/core" "^9.4.3"
@@ -16910,7 +16910,7 @@ react-scripts@4.0.3:
   optionalDependencies:
     fsevents "^2.1.3"
 
-react-spring@^9.2.4:
+react-spring@^9.2.4, react-spring@^9.4.3:
   version "9.4.3"
   resolved "https://registry.yarnpkg.com/react-spring/-/react-spring-9.4.3.tgz#3f697d3d6e990dbf7d182619dc75a72a63a302c1"
   integrity sha512-GGKAqQQ790JLoA2SAUgdJErFRG8oFR6pzX8jnJoqORVWX5Wo9bJUWs4563f2oN19+yQkVhc77neAkqQ7GCN8Lw==

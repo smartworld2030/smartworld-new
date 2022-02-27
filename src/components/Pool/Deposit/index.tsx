@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import { useBankDollars } from 'state/bank/hooks'
 import { useLiquidityValue } from 'state/pool/hooks'
 import { tryParseAmount } from 'state/swap/hooks'
-import { useSmartTokenBalances } from 'state/wallet/hooks'
+import { useUserSmartTokenBalances } from 'state/wallet/hooks'
 import TokenCircle from '../../Layout/PoolTokenCircle'
 import DepositInfo from './DepositInfo'
 
@@ -23,7 +23,7 @@ export type ValueType = {
 
 export const MainDepositSection = ({ toggle }) => {
   const dollar = useBankDollars()
-  const balances = useSmartTokenBalances()
+  const { loading, balances } = useUserSmartTokenBalances()
   const tokens = useFilteredProjectToken(neededToken)
   const lptoken = useLiquidityValue()
 
@@ -127,14 +127,14 @@ export const MainDepositSection = ({ toggle }) => {
       return balances?.[token]?.toSignificant()
     } else {
       if (token === 'LPTOKEN') {
-        const stts = +lptoken.stts * (inputAsFloat / 10 ** 8)
+        const stts = +lptoken.stts * (Number(inputAsFloat) / 10 ** 8)
         const usd = stts * dollar[token1]
         return Number.isNaN(usd) ? '0' : `${usd}`
       }
-      return Number.isNaN(inputAsFloat) ? '0' : `${inputAsFloat * dollar[token]}`
+      return Number.isNaN(inputAsFloat) ? '0' : `${Number(inputAsFloat) * dollar[token]}`
     }
   }
-
+  console.log(pairs)
   return (
     <ReverseFlex>
       <MainComponent
@@ -161,6 +161,7 @@ export const MainDepositSection = ({ toggle }) => {
         {pairSpliter().map((token, i, all) => (
           <BalanceInput
             key={i}
+            loading={loading}
             value={editingUnit === 'USD' ? inputs[0] : inputs[1 + i]}
             maxValue={balanceValues(token)}
             decimals={editingUnit === 'USD' ? 2 : tokens[token].decimals}

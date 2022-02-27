@@ -101,10 +101,9 @@ export default function Updater(): number {
               ? data[method].map((d: { [key: string]: string }) => resConverter(d))
               : resConverter(data[method]),
         },
-      {},
+      { loading: false },
     )
   }, [data])
-
   const states = useDebounce(compiledStates, 500)
 
   useEffect(() => {

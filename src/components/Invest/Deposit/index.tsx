@@ -4,7 +4,7 @@ import { useFilteredProjectToken } from 'hooks/Tokens'
 import { useState, useEffect } from 'react'
 import { useBankDollars } from 'state/bank/hooks'
 import { tryParseAmount } from 'state/swap/hooks'
-import { useSmartTokenBalances } from 'state/wallet/hooks'
+import { useUserSmartTokenBalances } from 'state/wallet/hooks'
 import TokenCircle from '../../Layout/InvestTokenCircle'
 import DepositInfo from './DepositInfo'
 
@@ -16,7 +16,7 @@ type ValueType = {
 
 export const MainDepositSection = ({ toggle }) => {
   const dollar = useBankDollars()
-  const balances = useSmartTokenBalances()
+  const { loading, balances } = useUserSmartTokenBalances()
   const tokens = useFilteredProjectToken(neededToken)
 
   const [token, setToken] = useState<string>('STTS')
@@ -80,7 +80,7 @@ export const MainDepositSection = ({ toggle }) => {
     if (editingUnit !== 'USD') {
       return balances?.[token]?.toSignificant()
     } else {
-      return Number.isNaN(inputAsFloat) ? '0' : `${inputAsFloat * dollar[token]}`
+      return Number.isNaN(inputAsFloat) ? '0' : `${Number(inputAsFloat) * dollar[token]}`
     }
   }
 
@@ -118,6 +118,7 @@ export const MainDepositSection = ({ toggle }) => {
         demo={<Skeleton size={200} />}
       >
         <BalanceInput
+          loading={loading}
           value={editingUnit === 'USD' ? inputs[0] : inputs[1]}
           maxValue={balanceValues()}
           onUserInput={handleInputChange}

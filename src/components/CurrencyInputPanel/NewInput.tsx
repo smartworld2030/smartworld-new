@@ -13,8 +13,7 @@ import useTokenComparator from 'components/SearchModal/sorting'
 import { FixedSizeList } from 'react-window'
 import { filterTokens, useSortedTokensByQuery } from 'components/SearchModal/filtering'
 import { getTokenLogoPath } from 'utils/getTokenLogoURL'
-
-const BAD_SRCS: { [tokenAddress: string]: true } = {}
+import useSwapCurrencyList from 'hooks/useSwapCurrenyList'
 
 interface CurrencyInputPanelProps {
   value: string
@@ -50,7 +49,6 @@ export default function CurrencyInputPanel({
   maxTokenCanBuy,
   showCommonBases,
 }: CurrencyInputPanelProps) {
-  const [, refresh] = useState<number>(0)
   const srcs = useCurrencyLogoSource({ currency })
   const { account } = useActiveWeb3React()
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
@@ -97,8 +95,8 @@ export default function CurrencyInputPanel({
 
   const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery)
 
+  const tokenList = useSwapCurrencyList(filteredSortedTokens)
   // const balances = useTokenBalances(account ?? undefined, filteredSortedTokens ?? undefined)
-
   const tokenPrice = useBUSDPrice(currency)?.toSignificant(3)
 
   const balanceValues = (val: string) => {
@@ -115,31 +113,28 @@ export default function CurrencyInputPanel({
         })
       : '0.00'
 
-  const src: string | undefined = srcs.find((s) => !BAD_SRCS[s])
-  // console.log(filteredSortedTokens)
   return (
     <SwapUnitList
       token={currency}
+      loading={!selectedCurrencyBalance ? (account ? true : false) : false}
       value={value}
       currencyValue={currencyValues}
       currencyUnit="USD"
-      // maxValue={
-      //   showMaxButton && label === 'OUTPUT'
-      //     ? maxTokenCanBuy?.toSignificant(6)
-      //     : selectedCurrencyBalance?.toSignificant(6)
-      // }
+      balance={
+        showMaxButton && label === 'OUTPUT'
+          ? maxTokenCanBuy?.toSignificant(6)
+          : selectedCurrencyBalance?.toSignificant(6)
+      }
       onUserInput={onUserInput}
       size={size > 200 ? 200 : size}
       margin={'auto'}
       disabled={hideInput}
-      image={src}
-      onImageError={() => {
-        if (src) BAD_SRCS[src] = true
-        refresh((i) => i + 1)
-      }}
+      image={srcs}
       placeholder={selectedCurrencyBalance?.toSignificant(6)}
-      selectedItem={(unit) => console.log(unit)}
-      selectedToken={(token) => onCurrencySelect(token)}
+      selectUnitHandler={(unit) => console.log(unit)}
+      // @ts-ignore
+      selectTokenHandler={({ token }) => onCurrencySelect(token)}
+      tokenList={tokenList}
       // tokenList={filteredSortedTokens}
       // logo={currency ? <CurrencyLogo currency={currency} size="12px" /> : <CurrencyLogo size="12px" />}
       // onLogoClick={() => {
@@ -150,12 +145,6 @@ export default function CurrencyInputPanel({
       //   if (!disableCurrencySelect) {
       //   }
       // }}
-    >
-      {({ onClick }) =>
-        filteredSortedTokens.map((token, i) => (
-          <SelectableToken token={token} onClick={() => onClick(i, token.symbol, token)} />
-        ))
-      }
-    </SwapUnitList>
+    />
   )
 }

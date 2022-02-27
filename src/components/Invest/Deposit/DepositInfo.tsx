@@ -34,8 +34,7 @@ const DepositInfo: React.FC<DepositInfoProps> = ({ price, token, value }) => {
       approval={approval}
       done={false}
       loading={false}
-      // @ts-ignore
-      disable={isNaN(price) || Number(price) < 100}
+      disable={isNaN(Number(price)) || Number(price) < 100}
       token={token.symbol}
       amount={value}
     />

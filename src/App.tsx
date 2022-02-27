@@ -21,8 +21,8 @@ const Swap = lazy(() => import('components/Swap'))
 
 const App = () => {
   const { toasts, remove } = useToast()
-  // usePollBlockNumber()
-  // useEagerConnect()
+  usePollBlockNumber()
+  useEagerConnect()
 
   return (
     <RelativeFlex>
@@ -37,7 +37,7 @@ const App = () => {
               justifyContent: 'space-between',
               minHeight: '100vh',
             }}
-            // header={<Header />}
+            header={<Header />}
             mainBackground="transparent"
             menuBackground="transparent"
             rightIcon={({ checked, onChange }) =>

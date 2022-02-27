@@ -5,6 +5,7 @@ import { useInvestCallback } from 'hooks/useInvestCallback'
 
 const MainWithdrawSection = ({ toggle }) => {
   const {
+    loading,
     calculateInterest: { referral, hourly, stts },
     users: { latestWithdraw },
   } = useUserInvestDetails()
@@ -57,7 +58,7 @@ const MainWithdrawSection = ({ toggle }) => {
         demo={<Skeleton size={200} />}
       >
         <WithdrawCircle
-          borderColor="white"
+          loading={loading}
           percent={percent}
           totalValue={currencyValue}
           totalValueUnit="$"

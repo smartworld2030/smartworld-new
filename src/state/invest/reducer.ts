@@ -2,6 +2,7 @@ import { createReducer } from '@reduxjs/toolkit'
 import { updateInvestStates } from './actions'
 
 export interface InvestData {
+  loading: boolean
   maxPercent: string
   calculateInterest: {
     stts: string
@@ -30,6 +31,7 @@ export interface InvestUser {
 }
 
 const defaultInvestData = {
+  loading: true,
   maxPercent: '1000',
   calculateInterest: {
     stts: '0',

@@ -31,8 +31,7 @@ export const HeadCircle: React.FC<HeadCircleProps> = ({
   return (
     <foreignObject x={positionX} y={positionY} width="1" height="1" overflow="visible">
       <PolygonButton
-        color={active ? undefined : colors.disabled}
-        shadow
+        stroke={active ? undefined : colors.disabled}
         scale={size}
         onClick={onClick}
         // @ts-ignore

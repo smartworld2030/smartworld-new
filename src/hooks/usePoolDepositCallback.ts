@@ -70,6 +70,6 @@ export function usePoolDepositCallback({
     user,
     reward,
   }
-  console.log(method, parameters, token === 'STTS' ? bnbValue : undefined, details)
+
   return [deposit, usePoolCallback(method, parameters, token === 'STTS' ? bnbValue : undefined, details)]
 }

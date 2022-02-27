@@ -103,7 +103,7 @@ const ReferralButton: React.FC<ReferralButtonProps> = ({ disable, slider, setPer
       scale="xl"
       blur={disable}
       fontSize={15}
-      icon={(w) => <AnimatedRefIcon width={w} fontSize={8} />}
+      icon={(w) => <AnimatedRefIcon width={w - 20} fontSize={8} />}
       onClick={onClick}
       disabled={disable}
     />

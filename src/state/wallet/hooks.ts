@@ -19,9 +19,7 @@ import useDebounce from 'hooks/useDebounce'
 /**
  * Returns a map of the given addresses to their eventually consistent BNB balances.
  */
-export function useBNBBalances(
-  uncheckedAddresses?: (string | undefined)[],
-): {
+export function useBNBBalances(uncheckedAddresses?: (string | undefined)[]): {
   [address: string]: CurrencyAmount | undefined
 } {
   const multicallContract = useMulticallContract()
@@ -184,9 +182,10 @@ export function useCurrencyBalances(
   account?: string,
   currencies?: (Currency | undefined)[],
 ): (CurrencyAmount | undefined)[] {
-  const tokens = useMemo(() => currencies?.filter((currency): currency is Token => currency instanceof Token) ?? [], [
-    currencies,
-  ])
+  const tokens = useMemo(
+    () => currencies?.filter((currency): currency is Token => currency instanceof Token) ?? [],
+    [currencies],
+  )
 
   const tokenBalances = useTokenBalances(account, tokens)
   const containsBNB: boolean = useMemo(() => currencies?.some((currency) => currency === ETHER) ?? false, [currencies])
@@ -220,9 +219,9 @@ export function useAllTokenBalances(): {
 }
 
 // mimics useAllBalances
-export function useSmartTokenBalances(): { [key: string]: CurrencyAmount } | {} {
+export function useUserSmartTokenBalances(): { loading: boolean; balances: { [key: string]: CurrencyAmount } } {
   const { account } = useWeb3React()
   const allTokens = useProjectTokensList()
   const balances = useProjectBalances(account, allTokens)
-  return balances
+  return { loading: !balances.BNB ? (account ? true : false) : false, balances }
 }
