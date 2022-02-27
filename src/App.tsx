@@ -14,10 +14,10 @@ import WalletModal, { WalletView } from 'components/Menu/UserMenu/WalletModal'
 import { MainSection, CogIcon, NoProfileAvatarIcon } from '@smartworld-libs/uikit'
 import GlobalMenuModal from 'menu'
 import useToast from 'hooks/useToast'
-import Home from 'components/Home'
 
 const Investment = lazy(() => import('components/Invest'))
 const Swap = lazy(() => import('components/Swap'))
+const Home = lazy(() => import('components/Home'))
 
 const App = () => {
   const { toasts, remove } = useToast()

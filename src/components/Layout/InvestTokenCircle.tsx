@@ -15,7 +15,7 @@ interface CircleProps {
 const TokenCircle: React.FC<CircleProps> = ({ width, active, token, loading, info, onClick }) => {
   const { transform, opacity } = useSpring({
     opacity: active ? 1 : 0,
-    transform: `perspective(60px) rotateY(${active ? 180 : 0}deg)`,
+    transform: `perspective(600px) rotateY(${active ? 180 : 0}deg)`,
     config: { mass: 5, tension: 500, friction: 80 },
   })
 

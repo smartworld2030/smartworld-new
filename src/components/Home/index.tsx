@@ -1,6 +1,7 @@
 import { Elements } from 'components/Fiber'
 import Fiber from 'components/Fiber/Fiber'
 import useTheme from 'hooks/useTheme'
+import { useWindowSize } from 'hooks/useWindowsSize'
 
 const pexel = (id: number): string =>
   `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260`
@@ -61,5 +62,7 @@ export default function Home() {
       colors: { background },
     },
   } = useTheme()
-  return <Fiber elements={elements1} height={700} backgroundColor={background} />
+  const { width, height } = useWindowSize()
+  console.log(height)
+  return <Fiber elements={elements1} width={width} height={height} backgroundColor={background} />
 }

@@ -9,7 +9,7 @@ const Fiber: React.FC<FiberProps> = ({
   fallback = <>Loading...</>,
   elements = [],
   width,
-  height,
+  height = 800,
 }) => {
   const [enabled, setEnabled] = useState(false)
   const [rotate, setRotate] = useState(false)
@@ -17,7 +17,7 @@ const Fiber: React.FC<FiberProps> = ({
   return (
     <Suspense fallback={fallback}>
       <Canvas
-        style={{ width, height }}
+        style={{ width, height: Number(height) - 180 }}
         gl={{ alpha: true, antialias: true }}
         dpr={[1, 1.5]}
         camera={{ fov: 70, position: [0, 0, 10] }}
