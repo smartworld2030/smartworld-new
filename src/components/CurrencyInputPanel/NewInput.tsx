@@ -96,7 +96,7 @@ export default function CurrencyInputPanel({
   const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery)
 
   const tokenList = useSwapCurrencyList(filteredSortedTokens)
-  // const balances = useTokenBalances(account ?? undefined, filteredSortedTokens ?? undefined)
+
   const tokenPrice = useBUSDPrice(currency)?.toSignificant(3)
 
   const balanceValues = (val: string) => {
@@ -116,7 +116,7 @@ export default function CurrencyInputPanel({
   return (
     <SwapUnitList
       token={currency}
-      loading={!selectedCurrencyBalance ? (account ? true : false) : false}
+      loading={label === 'INPUT' && !selectedCurrencyBalance ? (account ? true : false) : false}
       value={value}
       currencyValue={currencyValues}
       currencyUnit="USD"
@@ -126,7 +126,7 @@ export default function CurrencyInputPanel({
           : selectedCurrencyBalance?.toSignificant(6)
       }
       onUserInput={onUserInput}
-      size={size > 200 ? 200 : size}
+      size={size < 160 ? 160 : size}
       margin={'auto'}
       disabled={hideInput}
       image={srcs}

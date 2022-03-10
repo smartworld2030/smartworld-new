@@ -2382,10 +2382,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@smartworld-libs/uikit@^0.62.2":
-  version "0.62.2"
-  resolved "https://registry.yarnpkg.com/@smartworld-libs/uikit/-/uikit-0.62.2.tgz#a68b55b9cd1f795bf9711d0bd23ad0a67229357e"
-  integrity sha512-jbQK6iQylkm1hPG1k1IpmH3e67lBNE2ey2BIYuyIRK929xBPYzjSBIHqpEQkoN9LRvP0PCoaaaxKTdaHVVm8KQ==
+"@smartworld-libs/uikit@^0.63.2":
+  version "0.63.2"
+  resolved "https://registry.yarnpkg.com/@smartworld-libs/uikit/-/uikit-0.63.2.tgz#907a10033f43279bc2d0c7ba8488c0011d32ca11"
+  integrity sha512-TCVsgoaS0wanVu19y6Hb4XwFAkVMVzuHMi4z2eZmEnspifiVPuqNcgjxT1pcUuQwrA1JoGCLZUU6+DXRTgJ7Mw==
   dependencies:
     "@popperjs/core" "^2.9.2"
     "@react-spring/core" "^9.4.3"
@@ -17775,6 +17775,11 @@ scryptsy@2.1.0:
   resolved "https://registry.yarnpkg.com/scryptsy/-/scryptsy-2.1.0.tgz#8d1e8d0c025b58fdd25b6fa9a0dc905ee8faa790"
   integrity sha512-1CdSqHQowJBnMAFyPEBRfqag/YP9OF394FV+4YREIJX4ljD7OxvQRDayyoyyCk+senRjSkP6VnUNQmVQqB6g7w==
 
+seamless-scroll-polyfill@^2.1.8:
+  version "2.1.8"
+  resolved "https://registry.yarnpkg.com/seamless-scroll-polyfill/-/seamless-scroll-polyfill-2.1.8.tgz#357b478b54a093e03581dcc9c0a86eae4b00eee2"
+  integrity sha512-cF92Op90//vEpHphRx25rttJGXIgxcTB1WR5y0ODQhN7O4d0lSEOp5+l3sQDx0aAZ2MfXCqFEb/rG/3ghvVDIQ==
+
 secp256k1@4.0.2:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/secp256k1/-/secp256k1-4.0.2.tgz#15dd57d0f0b9fdb54ac1fa1694f40e5e9a54f4a1"
@@ -18086,6 +18091,11 @@ slice-ansi@^4.0.0:
     ansi-styles "^4.0.0"
     astral-regex "^2.0.0"
     is-fullwidth-code-point "^3.0.0"
+
+smoothscroll-polyfill@^0.4.4:
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/smoothscroll-polyfill/-/smoothscroll-polyfill-0.4.4.tgz#3a259131dc6930e6ca80003e1cb03b603b69abf8"
+  integrity sha512-TK5ZA9U5RqCwMpfoMq/l1mrH0JAR7y7KRvOBx0n2869aLxch+gT9GhN3yUfjiw+d/DiF1mKo14+hd62JyMmoBg==
 
 snake-case@^2.1.0:
   version "2.1.0"

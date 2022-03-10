@@ -35,7 +35,7 @@ function CurrencyRow(currency: Currency): SelectableTokenProps {
   )
 }
 
-export default function useSwapCurrencyList(currencies, showETH = true, breakIndex = undefined) {
+export default function useSwapCurrencyList(currencies, showETH = false, breakIndex = undefined) {
   const itemData: (Currency | undefined)[] = useMemo(() => {
     let formatted: (Currency | undefined)[] = showETH ? [Currency.ETHER, ...currencies] : currencies
     if (breakIndex !== undefined) {

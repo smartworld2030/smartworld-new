@@ -25,7 +25,7 @@ const App = () => {
   useEagerConnect()
 
   return (
-    <RelativeFlex>
+    <RelativeFlex margin={0}>
       <ToastContainer toasts={toasts} onRemove={remove} />
       <GlobalStyle />
       <SuspenseWithChunkError fallback={<PageLoader />}>
@@ -51,7 +51,7 @@ const App = () => {
                 ({ toggle: { showRight }, responsiveSize }) =>
                   (
                     <AnimatedTipFlex
-                      {...responsiveSize(12, showRight)}
+                      {...responsiveSize(15, showRight)}
                       flexDirection="column"
                       justifyContent="space-around"
                     >

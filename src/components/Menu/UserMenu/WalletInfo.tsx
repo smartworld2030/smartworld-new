@@ -39,7 +39,7 @@ const WalletInfo: React.FC<WalletInfoProps> = ({ hasLowBnbBalance, onDismiss }) 
   return !account ? (
     <ConnectWalletButton />
   ) : (
-    <Flex flexDirection="column" pt="10px">
+    <Flex flexDirection="column" pt="10px" height="100%" justifyContent="space-between">
       <Text color="secondary" fontSize="12px" textTransform="uppercase" fontWeight="bold" mb="8px">
         {t('Your Address')}
       </Text>

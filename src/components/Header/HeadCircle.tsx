@@ -31,13 +31,15 @@ export const HeadCircle: React.FC<HeadCircleProps> = ({
   return (
     <foreignObject x={positionX} y={positionY} width="1" height="1" overflow="visible">
       <PolygonButton
+        shadow
         stroke={active ? undefined : colors.disabled}
         scale={size}
+        active={active}
         onClick={onClick}
         // @ts-ignore
         to={link}
         icon={(w) => (text ? <p style={{ fontSize: 8, textDecoration: 'none' }}>{text}</p> : icon(w / 3))}
-      ></PolygonButton>
+      />
     </foreignObject>
   )
 }

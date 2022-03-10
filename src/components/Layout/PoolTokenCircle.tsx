@@ -32,7 +32,7 @@ const TokenCircle: React.FC<CircleProps> = ({ width, active, token, onClick }) =
           shape="circle"
           fontSize={10}
           iconProps={{ top: 0, left: 0 }}
-          shadow
+          active={active}
         >
           {token}
         </IconButton>
@@ -53,7 +53,7 @@ const TokenCircle: React.FC<CircleProps> = ({ width, active, token, onClick }) =
           shape="circle"
           fontSize={10}
           iconProps={{ top: 0, left: 0 }}
-          shadow
+          active={active}
         >
           {token}
         </IconButton>

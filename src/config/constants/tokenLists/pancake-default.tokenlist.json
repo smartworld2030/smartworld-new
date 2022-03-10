@@ -34,22 +34,7 @@
       "decimals": 8,
       "logoURI": "https://i.postimg.cc/4yxyZ24s/Smart-World-Stock.png"
     },
-    {
-      "name": "Pancake LPs",
-      "symbol": "LPTOKEN",
-      "address": "0x45Ee99347E4E3946bE250fEC8172401965E2DFB3",
-      "chainId": 56,
-      "decimals": 18,
-      "logoURI": "https://new.smartworld.app/assets/images/tokens/0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82.png"
-    },
-    {
-      "name": "Pancake LPs",
-      "symbol": "LPTOKEN",
-      "address": "0x3403db5EDd2541Aaa3793De4C0FFb31463A3D1cF",
-      "chainId": 97,
-      "decimals": 18,
-      "logoURI": "https://new.smartworld.app/assets/images/tokens/0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82.png"
-    },
+
     {
       "name": "BUSD Token",
       "symbol": "BUSD",

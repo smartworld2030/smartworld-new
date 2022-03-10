@@ -26,7 +26,7 @@ const TokenCircle: React.FC<CircleProps> = ({ width, active, token, loading, inf
           isLoading={loading}
           bottomIcon={() => (info && info !== 'Infinity' ? info : 0)}
           icon={(w) => <CurrencyLogo currency={token} size={w + 'px'} />}
-          variant="secondary"
+          active={active}
           scale="ml"
           shape="circle"
           shadow
@@ -48,6 +48,7 @@ const TokenCircle: React.FC<CircleProps> = ({ width, active, token, loading, inf
           isLoading={loading}
           icon={(w) => <CurrencyLogo currency={token} size={w + 'px'} />}
           bottomIcon={() => (info && info !== 'Infinity' ? info : 0)}
+          active={active}
           scale="ml"
           shape="circle"
           shadow

@@ -375,16 +375,8 @@ export default function Swap() {
     )
 
   return (
-    <>
-      <MainComponent
-        overflow="visible"
-        tip="Withdraw Circle"
-        flex={7}
-        justifyContent="space-around"
-        alignItems="center"
-        tipSize={2}
-        demo={<Skeleton size={250} />}
-      >
+    <Flex width="93vw" overflowY="visible" flexDirection="column-reverse" margin="auto">
+      <MainComponent overflow="visible" flex={7} justifyContent="space-around" alignItems="center">
         <CurrencyInputPanel
           label={Field.INPUT}
           value={formattedAmounts[Field.INPUT]}
@@ -396,7 +388,7 @@ export default function Swap() {
           otherCurrency={currencies[Field.OUTPUT]}
           hideBalance
           id="swap-currency-input"
-          size={width / 2.5}
+          size={width / 6}
           showCommonBases
         />
         <Flex justifyContent="center" flexDirection="column">
@@ -427,26 +419,19 @@ export default function Swap() {
           hideBalance
           maxTokenCanBuy={maxTokenCanBuy}
           id="swap-currency-output"
-          size={width / 2.5}
+          size={width / 6}
           showCommonBases
         />
       </MainComponent>
-      <MainComponent
-        overflow="visible"
-        tip="Withdraw Circle"
-        flex={6}
-        justifyContent="space-around"
-        alignItems="center"
-        demo={<Skeleton size={250} />}
-      >
+      <MainComponent overflow="visible" flex={6} justifyContent="space-around" alignItems="center">
         {swapIsUnsupported ? (
-          <Button shape="circle" scale="lg" width="300px" disabled mb="4px">
+          <Button shape="circle" width="300px" disabled mb="4px">
             {t('Unsupported Asset')}
           </Button>
         ) : !account ? (
           <ConnectWalletButton shape="circle" />
         ) : showWrap ? (
-          <Button shape="circle" scale="lg" width="300px" disabled={Boolean(wrapInputError)} onClick={onWrap}>
+          <Button shape="circle" width="300px" disabled={Boolean(wrapInputError)} onClick={onWrap}>
             {wrapInputError ?? (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
           </Button>
         ) : noRoute && userHasSpecifiedInputOutput ? (
@@ -464,7 +449,6 @@ export default function Swap() {
           <Flex justifyContent="space-between" width="30%">
             <Button
               shape="circle"
-              scale="lg"
               width="64px"
               variant={approval === ApprovalState.APPROVED ? 'success' : 'primary'}
               onClick={approveCallback}
@@ -484,7 +468,6 @@ export default function Swap() {
             </Button>
             <Button
               shape="circle"
-              scale="lg"
               width="64px"
               variant={isValid && priceImpactSeverity > 2 ? 'danger' : 'primary'}
               onClick={() => {
@@ -514,6 +497,6 @@ export default function Swap() {
           <SwapButton />
         )}
       </MainComponent>
-    </>
+    </Flex>
   )
 }
