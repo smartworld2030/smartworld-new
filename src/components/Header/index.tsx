@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { sizeCalculator } from './Links'
 import { HeadCircle } from './HeadCircle'
 import ChainPriceFeed from './ChainPriceFeed'

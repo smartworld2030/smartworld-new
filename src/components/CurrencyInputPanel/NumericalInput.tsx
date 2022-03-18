@@ -8,8 +8,7 @@ const StyledInput = styled.input<{
   fontSize?: string
   align?: string
 }>`
-  color: ${({ error, theme }) =>
-    error ? theme.colors.failure : theme.colors.text};
+  color: ${({ error, theme }) => (error ? theme.colors.failure : theme.colors.text)};
   width: 0;
   position: relative;
   font-weight: 500;

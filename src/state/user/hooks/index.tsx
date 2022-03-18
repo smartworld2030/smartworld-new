@@ -25,9 +25,7 @@ import { deserializeToken, serializeToken } from './helpers'
 
 export function useAudioModeManager(): [boolean, () => void] {
   const dispatch = useDispatch<AppDispatch>()
-  const audioPlay = useSelector<AppState, AppState['user']['audioPlay']>(
-    (state) => state.user.audioPlay
-  )
+  const audioPlay = useSelector<AppState, AppState['user']['audioPlay']>((state) => state.user.audioPlay)
 
   const toggleSetAudioMode = useCallback(() => {
     if (audioPlay) {
@@ -41,9 +39,7 @@ export function useAudioModeManager(): [boolean, () => void] {
 }
 
 export function useIsExpertMode(): boolean {
-  return useSelector<AppState, AppState['user']['userExpertMode']>(
-    (state) => state.user.userExpertMode
-  )
+  return useSelector<AppState, AppState['user']['userExpertMode']>((state) => state.user.userExpertMode)
 }
 
 export function useExpertModeManager(): [boolean, () => void] {
@@ -59,9 +55,7 @@ export function useExpertModeManager(): [boolean, () => void] {
 
 export function useThemeManager(): [boolean, () => void] {
   const dispatch = useDispatch<AppDispatch>()
-  const isDark = useSelector<AppState, AppState['user']['isDark']>(
-    (state) => state.user.isDark
-  )
+  const isDark = useSelector<AppState, AppState['user']['isDark']>((state) => state.user.isDark)
 
   const toggleTheme = useCallback(() => {
     dispatch(toggleThemeAction())
@@ -70,36 +64,26 @@ export function useThemeManager(): [boolean, () => void] {
   return [isDark, toggleTheme]
 }
 
-export function useUserSingleHopOnly(): [
-  boolean,
-  (newSingleHopOnly: boolean) => void
-] {
+export function useUserSingleHopOnly(): [boolean, (newSingleHopOnly: boolean) => void] {
   const dispatch = useDispatch<AppDispatch>()
 
-  const singleHopOnly = useSelector<
-    AppState,
-    AppState['user']['userSingleHopOnly']
-  >((state) => state.user.userSingleHopOnly)
+  const singleHopOnly = useSelector<AppState, AppState['user']['userSingleHopOnly']>(
+    (state) => state.user.userSingleHopOnly,
+  )
 
   const setSingleHopOnly = useCallback(
     (newSingleHopOnly: boolean) => {
       dispatch(updateUserSingleHopOnly({ userSingleHopOnly: newSingleHopOnly }))
     },
-    [dispatch]
+    [dispatch],
   )
 
   return [singleHopOnly, setSingleHopOnly]
 }
 
-export function useUserSlippageTolerance(): [
-  number,
-  (slippage: number) => void
-] {
+export function useUserSlippageTolerance(): [number, (slippage: number) => void] {
   const dispatch = useDispatch<AppDispatch>()
-  const userSlippageTolerance = useSelector<
-    AppState,
-    AppState['user']['userSlippageTolerance']
-  >((state) => {
+  const userSlippageTolerance = useSelector<AppState, AppState['user']['userSlippageTolerance']>((state) => {
     return state.user.userSlippageTolerance
   })
 
@@ -107,54 +91,43 @@ export function useUserSlippageTolerance(): [
     (slippage: number) => {
       dispatch(updateUserSlippageTolerance({ userSlippageTolerance: slippage }))
     },
-    [dispatch]
+    [dispatch],
   )
 
   return [userSlippageTolerance, setUserSlippageTolerance]
 }
 
-export function useUserFarmStakedOnly(
-  isActive: boolean
-): [boolean, (stakedOnly: boolean) => void] {
+export function useUserFarmStakedOnly(isActive: boolean): [boolean, (stakedOnly: boolean) => void] {
   const dispatch = useDispatch<AppDispatch>()
-  const userFarmStakedOnly = useSelector<
-    AppState,
-    AppState['user']['userFarmStakedOnly']
-  >((state) => {
+  const userFarmStakedOnly = useSelector<AppState, AppState['user']['userFarmStakedOnly']>((state) => {
     return state.user.userFarmStakedOnly
   })
 
   const setUserFarmStakedOnly = useCallback(
     (stakedOnly: boolean) => {
-      const farmStakedOnly = stakedOnly
-        ? FarmStakedOnly.TRUE
-        : FarmStakedOnly.FALSE
+      const farmStakedOnly = stakedOnly ? FarmStakedOnly.TRUE : FarmStakedOnly.FALSE
       dispatch(updateUserFarmStakedOnly({ userFarmStakedOnly: farmStakedOnly }))
     },
-    [dispatch]
+    [dispatch],
   )
 
   return [
-    userFarmStakedOnly === FarmStakedOnly.ON_FINISHED
-      ? !isActive
-      : userFarmStakedOnly === FarmStakedOnly.TRUE,
+    userFarmStakedOnly === FarmStakedOnly.ON_FINISHED ? !isActive : userFarmStakedOnly === FarmStakedOnly.TRUE,
     setUserFarmStakedOnly,
   ]
 }
 
 export function useUserTransactionTTL(): [number, (slippage: number) => void] {
   const dispatch = useDispatch<AppDispatch>()
-  const userDeadline = useSelector<AppState, AppState['user']['userDeadline']>(
-    (state) => {
-      return state.user.userDeadline
-    }
-  )
+  const userDeadline = useSelector<AppState, AppState['user']['userDeadline']>((state) => {
+    return state.user.userDeadline
+  })
 
   const setUserDeadline = useCallback(
     (deadline: number) => {
       dispatch(updateUserDeadline({ userDeadline: deadline }))
     },
-    [dispatch]
+    [dispatch],
   )
 
   return [userDeadline, setUserDeadline]
@@ -166,20 +139,17 @@ export function useAddUserToken(): (token: Token) => void {
     (token: Token) => {
       dispatch(addSerializedToken({ serializedToken: serializeToken(token) }))
     },
-    [dispatch]
+    [dispatch],
   )
 }
 
-export function useRemoveUserAddedToken(): (
-  chainId: number,
-  address: string
-) => void {
+export function useRemoveUserAddedToken(): (chainId: number, address: string) => void {
   const dispatch = useDispatch<AppDispatch>()
   return useCallback(
     (chainId: number, address: string) => {
       dispatch(removeSerializedToken({ chainId, address }))
     },
-    [dispatch]
+    [dispatch],
   )
 }
 
@@ -197,7 +167,7 @@ export function usePairAdder(): (pair: Pair) => void {
     (pair: Pair) => {
       dispatch(addSerializedPair({ serializedPair: serializePair(pair) }))
     },
-    [dispatch]
+    [dispatch],
   )
 }
 
@@ -207,13 +177,7 @@ export function usePairAdder(): (pair: Pair) => void {
  * @param tokenB the other token
  */
 export function toV2LiquidityToken([tokenA, tokenB]: [Token, Token]): Token {
-  return new Token(
-    tokenA.chainId,
-    Pair.getAddress(tokenA, tokenB),
-    18,
-    'Cake-LP',
-    'Pancake LPs'
-  )
+  return new Token(tokenA.chainId, Pair.getAddress(tokenA, tokenB), 18, 'Cake-LP', 'Pancake LPs')
 }
 
 /**
@@ -224,10 +188,7 @@ export function useTrackedTokenPairs(): [Token, Token][] {
   const tokens = useAllTokens()
 
   // pinned pairs
-  const pinnedPairs = useMemo(
-    () => (chainId ? PINNED_PAIRS[chainId] ?? [] : []),
-    [chainId]
-  )
+  const pinnedPairs = useMemo(() => (chainId ? PINNED_PAIRS[chainId] ?? [] : []), [chainId])
 
   // pairs for every token against every base
   const generatedPairs: [Token, Token][] = useMemo(
@@ -250,13 +211,11 @@ export function useTrackedTokenPairs(): [Token, Token][] {
             )
           })
         : [],
-    [tokens, chainId]
+    [tokens, chainId],
   )
 
   // pairs saved by users
-  const savedSerializedPairs = useSelector<AppState, AppState['user']['pairs']>(
-    ({ user: { pairs } }) => pairs
-  )
+  const savedSerializedPairs = useSelector<AppState, AppState['user']['pairs']>(({ user: { pairs } }) => pairs)
 
   const userPairs: [Token, Token][] = useMemo(() => {
     if (!chainId || !savedSerializedPairs) return []
@@ -264,32 +223,24 @@ export function useTrackedTokenPairs(): [Token, Token][] {
     if (!forChain) return []
 
     return Object.keys(forChain).map((pairId) => {
-      return [
-        deserializeToken(forChain[pairId].token0),
-        deserializeToken(forChain[pairId].token1),
-      ]
+      return [deserializeToken(forChain[pairId].token0), deserializeToken(forChain[pairId].token1)]
     })
   }, [savedSerializedPairs, chainId])
 
   const combinedList = useMemo(
     () => userPairs.concat(generatedPairs).concat(pinnedPairs),
-    [generatedPairs, pinnedPairs, userPairs]
+    [generatedPairs, pinnedPairs, userPairs],
   )
 
   return useMemo(() => {
     // dedupes pairs of tokens in the combined list
-    const keyed = combinedList.reduce<{ [key: string]: [Token, Token] }>(
-      (memo, [tokenA, tokenB]) => {
-        const sorted = tokenA.sortsBefore(tokenB)
-        const key = sorted
-          ? `${tokenA.address}:${tokenB.address}`
-          : `${tokenB.address}:${tokenA.address}`
-        if (memo[key]) return memo
-        memo[key] = sorted ? [tokenA, tokenB] : [tokenB, tokenA]
-        return memo
-      },
-      {}
-    )
+    const keyed = combinedList.reduce<{ [key: string]: [Token, Token] }>((memo, [tokenA, tokenB]) => {
+      const sorted = tokenA.sortsBefore(tokenB)
+      const key = sorted ? `${tokenA.address}:${tokenB.address}` : `${tokenB.address}:${tokenA.address}`
+      if (memo[key]) return memo
+      memo[key] = sorted ? [tokenA, tokenB] : [tokenB, tokenA]
+      return memo
+    }, {})
 
     return Object.keys(keyed).map((key) => keyed[key])
   }, [combinedList])

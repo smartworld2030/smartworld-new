@@ -82,13 +82,3 @@ ReactDOM.render(
   </StrictMode>,
   document.getElementById('root'),
 )
-
-{
-  /* <StrictMode>
-<Providers>
-  <Router>
-    <App />
-  </Router>
-</Providers>
-</StrictMode> */
-}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { ButtonMenu, ButtonMenuItem, Flex, InjectedModalProps } from '@smartworld-libs/uikit'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'

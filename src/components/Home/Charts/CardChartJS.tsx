@@ -1,4 +1,4 @@
-import React from 'react'
+import { useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { Chart, registerables } from 'chart.js'
 import { Line } from 'react-chartjs-2'
@@ -6,9 +6,9 @@ import { Line } from 'react-chartjs-2'
 Chart.register(...registerables)
 
 export default function CardChartJS({ tokenId, title, subtitle, color, chart, dayProfit, children }) {
-  const chartRef = React.useRef(null)
+  const chartRef = useRef(null)
 
-  React.useEffect(() => {
+  useEffect(() => {
     chartRef.current.setDatasetVisibility(1, false)
     chartRef.current.setDatasetVisibility(2, false)
     chartRef.current.update()

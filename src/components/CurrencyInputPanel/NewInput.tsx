@@ -1,19 +1,14 @@
-import { Currency, CurrencyAmount, Pair, Token } from '@pancakeswap/sdk'
-import { Text, useModal, Flex, SwapUnitList, SelectableToken } from '@smartworld-libs/uikit'
+import { KeyboardEvent, RefObject, useCallback, useRef, useState } from 'react'
+import { Currency, CurrencyAmount, ETHER, Pair, Token } from '@pancakeswap/sdk'
+import { Input, SwapUnitList } from '@smartworld-libs/uikit'
 import { useTranslation } from 'contexts/Localization'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
-import { useAllTokenBalances, useCurrencyBalance, useTokenBalances } from '../../state/wallet/hooks'
-import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
-import { CurrencyLogo, useCurrencyLogoSource, DoubleCurrencyLogo } from '../Logo'
+import { useCurrencyBalance } from '../../state/wallet/hooks'
+import { useCurrencyLogoSource } from '../Logo'
 import useBUSDPrice from 'hooks/useBUSDPrice'
-import { useCallback, useMemo, useRef, useState } from 'react'
-import { useAllTokens, useIsUserAddedToken, useToken } from 'hooks/Tokens'
 import useDebounce from 'hooks/useDebounce'
-import useTokenComparator from 'components/SearchModal/sorting'
-import { FixedSizeList } from 'react-window'
-import { filterTokens, useSortedTokensByQuery } from 'components/SearchModal/filtering'
-import { getTokenLogoPath } from 'utils/getTokenLogoURL'
 import useSwapCurrencyList from 'hooks/useSwapCurrenyList'
+import { isAddress } from 'utils'
 
 interface CurrencyInputPanelProps {
   value: string
@@ -49,32 +44,16 @@ export default function CurrencyInputPanel({
   maxTokenCanBuy,
   showCommonBases,
 }: CurrencyInputPanelProps) {
+  const [showList, setShowList] = useState(false)
+
   const srcs = useCurrencyLogoSource({ currency })
   const { account } = useActiveWeb3React()
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
 
   const { t } = useTranslation()
 
-  const { chainId } = useActiveWeb3React()
-
-  // refs for fixed size lists
-  const fixedList = useRef<FixedSizeList>()
-
   const [searchQuery, setSearchQuery] = useState<string>('')
   const debouncedQuery = useDebounce(searchQuery, 200)
-
-  const [invertSearchOrder] = useState<boolean>(false)
-
-  const allTokens = useAllTokens()
-
-  // if they input an address, use it
-  const searchToken = useToken(debouncedQuery)
-  const searchTokenIsAdded = useIsUserAddedToken(searchToken)
-
-  const showETH: boolean = useMemo(() => {
-    const s = debouncedQuery.toLowerCase().trim()
-    return s === '' || s === 'b' || s === 'bn' || s === 'bnb'
-  }, [debouncedQuery])
 
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {
@@ -83,19 +62,7 @@ export default function CurrencyInputPanel({
     [onCurrencySelect],
   )
 
-  const tokenComparator = useTokenComparator(invertSearchOrder)
-
-  const filteredTokens: Token[] = useMemo(() => {
-    return filterTokens(Object.values(allTokens), debouncedQuery)
-  }, [allTokens, debouncedQuery])
-
-  const sortedTokens: Token[] = useMemo(() => {
-    return filteredTokens.sort(tokenComparator)
-  }, [filteredTokens, tokenComparator])
-
-  const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery)
-
-  const tokenList = useSwapCurrencyList(filteredSortedTokens)
+  const tokenList = useSwapCurrencyList(debouncedQuery, otherCurrency)
 
   const tokenPrice = useBUSDPrice(currency)?.toSignificant(3)
 
@@ -113,8 +80,60 @@ export default function CurrencyInputPanel({
         })
       : '0.00'
 
+  // manage focus on modal show
+  const inputRef = useRef<HTMLInputElement>()
+
+  const handleInput = useCallback((event) => {
+    const input = event.target.value
+    const checksummedInput = isAddress(input)
+    setSearchQuery(checksummedInput || input)
+  }, [])
+
+  const handleEnter = useCallback(
+    (e: KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') {
+        const s = debouncedQuery.toLowerCase().trim()
+        if (s === 'bnb') {
+          handleCurrencySelect(ETHER)
+          setShowList(false)
+        } else if (tokenList.length > 0) {
+          if (tokenList[0].symbol?.toLowerCase() === debouncedQuery.trim().toLowerCase() || tokenList.length === 1) {
+            handleCurrencySelect(tokenList[0])
+            setTimeout(() => {
+              setShowList(false)
+            }, 500)
+          }
+        }
+      }
+    },
+    [tokenList, handleCurrencySelect, debouncedQuery],
+  )
+
   return (
     <SwapUnitList
+      showList={showList}
+      setShowList={(e) => {
+        setShowList(e)
+        if (e)
+          setTimeout(() => {
+            inputRef.current.focus()
+          }, 100)
+      }}
+      topElement={
+        <Input
+          style={{ width: '95%', margin: 'auto', marginTop: '10px' }}
+          id="token-search-input"
+          placeholder={t('Search name or paste address')}
+          scale="md"
+          autoComplete="off"
+          onFocus={() => console.log('focus')}
+          value={searchQuery}
+          ref={inputRef as RefObject<HTMLInputElement>}
+          onChange={handleInput}
+          onKeyDown={handleEnter}
+        />
+      }
+      id={label}
       token={currency}
       loading={label === 'INPUT' && !selectedCurrencyBalance ? (account ? true : false) : false}
       value={value}
@@ -131,20 +150,9 @@ export default function CurrencyInputPanel({
       disabled={hideInput}
       image={srcs}
       placeholder={selectedCurrencyBalance?.toSignificant(6)}
-      selectUnitHandler={(unit) => console.log(unit)}
-      // @ts-ignore
-      selectTokenHandler={({ token }) => onCurrencySelect(token)}
+      onUnitSelect={(unit) => console.log(unit)}
+      onTokenSelect={({ token }) => handleCurrencySelect(token as Token)}
       tokenList={tokenList}
-      // tokenList={filteredSortedTokens}
-      // logo={currency ? <CurrencyLogo currency={currency} size="12px" /> : <CurrencyLogo size="12px" />}
-      // onLogoClick={() => {
-      //   if (!disableCurrencySelect) {
-      //   }
-      // }}
-      // onUnitClick={() => {
-      //   if (!disableCurrencySelect) {
-      //   }
-      // }}
     />
   )
 }

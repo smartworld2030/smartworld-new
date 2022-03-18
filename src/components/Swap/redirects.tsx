@@ -6,9 +6,7 @@ export function RedirectPathToSwapOnly({ location }: RouteComponentProps) {
 }
 
 // Redirects from the /swap/:outputCurrency path to the /swap?outputCurrency=:outputCurrency format
-export function RedirectToSwap(
-  props: RouteComponentProps<{ outputCurrency: string }>
-) {
+export function RedirectToSwap(props: RouteComponentProps<{ outputCurrency: string }>) {
   const {
     location,
     location: { search },

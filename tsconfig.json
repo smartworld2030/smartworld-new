@@ -2,7 +2,11 @@
   "compilerOptions": {
     "baseUrl": "src",
     "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": false,
     "esModuleInterop": true,
@@ -18,7 +22,9 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "noImplicitAny": false,
-    "strict": true,
+    "strict": true
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

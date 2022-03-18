@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import styled from 'styled-components'
 import { CurrencyAmount, JSBI, Token, Trade } from '@pancakeswap/sdk'
 import {
   Button,
@@ -9,27 +8,20 @@ import {
   Flex,
   useWindowSize,
   MainComponent,
-  Skeleton,
   PayButton,
   IconButton,
 } from '@smartworld-libs/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
-import UnsupportedCurrencyFooter from 'components/UnsupportedCurrencyFooter'
 import { useHistory } from 'react-router'
 import { useTranslation } from 'contexts/Localization'
 import SwapWarningTokens from 'config/constants/swapWarningTokens'
 import { getAddress } from 'utils/addressHelpers'
-import { GreyCard } from 'components/Card'
-import { AutoColumn } from 'components/Layout/Column'
 import ConfirmSwapModal from './components/ConfirmSwapModal'
 import CurrencyInputPanel from 'components/CurrencyInputPanel/NewInput'
-import { AutoRow, RowBetween } from 'components/Layout/Row'
-import AdvancedSwapDetailsDropdown from './components/AdvancedSwapDetailsDropdown'
+import { AutoRow } from 'components/Layout/Row'
 import confirmPriceImpactWithoutFee from './components/confirmPriceImpactWithoutFee'
-import TradePrice from './components/TradePrice'
 import ImportTokenWarningModal from './components/ImportTokenWarningModal'
 import ConnectWalletButton from 'components/ConnectWalletButton'
-import { INITIAL_ALLOWED_SLIPPAGE } from 'config/constants'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useCurrency, useAllTokens } from 'hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from 'hooks/useApproveCallback'
@@ -42,12 +34,6 @@ import { maxAmountSpend } from 'utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from 'utils/prices'
 import CircleLoader from 'components/Loader/CircleLoader'
 import SwapWarningModal from './components/SwapWarningModal'
-
-const Label = styled(Text)`
-  font-size: 12px;
-  font-weight: bold;
-  color: ${({ theme }) => theme.colors.secondary};
-`
 
 export default function Swap() {
   const history = useHistory()
@@ -208,7 +194,6 @@ export default function Swap() {
   }, [priceImpactWithoutFee, swapCallback, tradeToConfirm])
 
   // errors
-  const [showInverted, setShowInverted] = useState<boolean>(false)
 
   // warnings on slippage
   const priceImpactSeverity = warningSeverity(priceImpactWithoutFee)
@@ -324,23 +309,13 @@ export default function Swap() {
     'confirmSwapModal',
   )
 
-  const Prices = () => (
-    <AutoColumn gap="8px" justify="center" style={{ padding: '16px' }}>
-      {swapIsUnsupported && <UnsupportedCurrencyFooter currencies={[currencies.INPUT, currencies.OUTPUT]} />}
-      {Boolean(trade) && (
-        <TradePrice price={trade?.executionPrice} showInverted={showInverted} setShowInverted={setShowInverted} />
-      )}
-      {allowedSlippage !== INITIAL_ALLOWED_SLIPPAGE && (
-        <RowBetween align="center">
-          <Label>{t('Slippage Tolerance')}</Label>
-          <Text bold color="primary">
-            {allowedSlippage / 100}%
-          </Text>
-        </RowBetween>
-      )}
-      <AdvancedSwapDetailsDropdown trade={trade} />
-    </AutoColumn>
-  )
+  // const Routes = () => {
+  //   const lastTrade = useLastTruthy(trade)
+
+  //   const showRoute = Boolean(trade && trade.route.path.length > 2)
+
+  //   return showRoute && <SwapRoute trade={trade ?? lastTrade ?? undefined} />
+  // }
 
   const SwapButton = () =>
     swapInputError || (priceImpactSeverity > 3 && !isExpertMode) ? (
@@ -375,7 +350,7 @@ export default function Swap() {
     )
 
   return (
-    <Flex width="93vw" overflowY="visible" flexDirection="column-reverse" margin="auto">
+    <Flex width="100%" overflowY="visible" flexDirection="column-reverse" margin="auto">
       <MainComponent overflow="visible" flex={7} justifyContent="space-around" alignItems="center">
         <CurrencyInputPanel
           label={Field.INPUT}
@@ -391,7 +366,7 @@ export default function Swap() {
           size={width / 6}
           showCommonBases
         />
-        <Flex justifyContent="center" flexDirection="column">
+        <Flex justifyContent="space-between" flexDirection="column">
           <IconButton
             blur={false}
             scale="sm"
@@ -425,26 +400,24 @@ export default function Swap() {
       </MainComponent>
       <MainComponent overflow="visible" flex={6} justifyContent="space-around" alignItems="center">
         {swapIsUnsupported ? (
-          <Button shape="circle" width="300px" disabled mb="4px">
+          <Text color="textSubtle" mb="4px">
             {t('Unsupported Asset')}
-          </Button>
+          </Text>
         ) : !account ? (
           <ConnectWalletButton shape="circle" />
         ) : showWrap ? (
-          <Button shape="circle" width="300px" disabled={Boolean(wrapInputError)} onClick={onWrap}>
-            {wrapInputError ?? (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
-          </Button>
+          wrapInputError ?? (
+            <PayButton shape="circle" scale="xl" active={false} disabled={Boolean(wrapInputError)} onClick={onWrap}>
+              {() => (
+                <Text bold>{wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null}</Text>
+              )}
+            </PayButton>
+          )
         ) : noRoute && userHasSpecifiedInputOutput ? (
-          <GreyCard style={{ textAlign: 'center' }}>
-            <Text color="textSubtle" mb="4px">
-              {t('Insufficient liquidity for this trade.')}
-            </Text>
-            {singleHopOnly && (
-              <Text color="textSubtle" mb="4px">
-                {t('Try enabling multi-hop trades.')}
-              </Text>
-            )}
-          </GreyCard>
+          <>
+            <>{t('Insufficient liquidity for this trade.')}</>
+            {singleHopOnly && t('Try enabling multi-hop trades.')}
+          </>
         ) : showApproveFlow ? (
           <Flex justifyContent="space-between" width="30%">
             <Button

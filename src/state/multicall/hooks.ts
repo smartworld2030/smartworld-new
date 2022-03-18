@@ -266,10 +266,10 @@ export function useSingleCallMultipleMethod(
   inputs?: OptionalMethodInputs[],
   options?: ListenerOptions,
 ): CallState[] {
-  const fragments = useMemo(() => methodNames.map((methodName) => contract?.interface?.getFunction(methodName)), [
-    contract,
-    methodNames,
-  ])
+  const fragments = useMemo(
+    () => methodNames.map((methodName) => contract?.interface?.getFunction(methodName)),
+    [contract, methodNames],
+  )
 
   const calls = useMemo<Call[]>(() => {
     return contract && fragments && isValidMethodArgs(inputs)

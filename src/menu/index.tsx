@@ -1,4 +1,3 @@
-import React from 'react'
 import { BoxProps, ThemeSwitcher, Toggle } from '@smartworld-libs/uikit'
 import { InjectedProps } from '@smartworld-libs/uikit/dist/widgets/Modal/types'
 import useTheme from 'hooks/useTheme'

@@ -1,4 +1,4 @@
-import React, { Fragment, memo } from 'react'
+import { Fragment, memo } from 'react'
 import { Trade } from '@pancakeswap/sdk'
 import { Text, Flex, ChevronRightIcon } from '@smartworld-libs/uikit'
 import { unwrappedToken } from 'utils/wrappedCurrency'

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useCursor, Html } from '@react-three/drei'
 import { Mesh } from 'three'
 import { useThree } from '@react-three/fiber'

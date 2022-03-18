@@ -1,5 +1,5 @@
-import { Currency, ETHER, Token } from '@pancakeswap/sdk'
 import { useMemo } from 'react'
+import { Currency, ETHER, Token } from '@pancakeswap/sdk'
 import getTokenLogoURL from '../../utils/getTokenLogoURL'
 
 export default function useCurrencyLogoSource({ currency }: { currency?: Currency }) {

@@ -22,37 +22,37 @@ const elements1: Elements[] = [
     name: 'ITEM1',
     rotation: [0, -1.3463968594046645, 0],
     position: [4.874639511108398, 0, -1.1126046180725098],
-    element: (props, styles) => <img {...props} style={styles} src={pexel(325185)} />,
+    element: (props, styles) => <img alt="test" {...props} style={styles} src={pexel(325185)} />,
   },
   {
     name: 'ITEM2',
     rotation: [0, -0.4487989845410365, 0],
     position: [2.1694188117980957, 0, -4.5048441886901855],
-    element: (props, styles) => <img {...props} style={styles} src={pexel(310452)} />,
+    element: (props, styles) => <img alt="test" {...props} style={styles} src={pexel(310452)} />,
   },
   {
     name: 'ITEM3',
     rotation: [0, 0.4487989845410365, 0],
     position: [-2.1694188117980957, 0, -4.5048441886901855],
-    element: (props, styles) => <img {...props} style={styles} src={pexel(358574)} />,
+    element: (props, styles) => <img alt="test" {...props} style={styles} src={pexel(358574)} />,
   },
   {
     name: 'ITEM4',
     rotation: [0, 1.3463968594046645, 0],
     position: [-4.874639511108398, 0, -1.1126046180725098],
-    element: (props, styles) => <img {...props} style={styles} src={pexel(327482)} />,
+    element: (props, styles) => <img alt="test" {...props} style={styles} src={pexel(327482)} />,
   },
   {
     name: 'ITEM5',
     rotation: [-3.141592653589793, 0.8975979081621641, -3.141592653589793],
     position: [-3.9091575145721436, 0, 3.1174490451812744],
-    element: (props, styles) => <img {...props} style={styles} src={pexel(416430)} />,
+    element: (props, styles) => <img alt="test" {...props} style={styles} src={pexel(416430)} />,
   },
   {
     name: 'ITEM6',
     rotation: [0, -3.141592653589793, 0],
     position: [0, 0, 5],
-    element: (props, styles) => <img {...props} style={styles} src={pexel(310452)} />,
+    element: (props, styles) => <img alt="test" {...props} style={styles} src={pexel(310452)} />,
   },
 ]
 

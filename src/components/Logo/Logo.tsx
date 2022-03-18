@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { HelpIcon } from '@smartworld-libs/uikit'
 
 const BAD_SRCS: { [tokenAddress: string]: true } = {}

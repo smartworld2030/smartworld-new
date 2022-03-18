@@ -10,11 +10,7 @@ const Circle = styled.div<{ confirmed?: boolean; disabled?: boolean }>`
   min-width: 20px;
   min-height: 20px;
   background-color: ${({ theme, confirmed, disabled }) =>
-    disabled
-      ? theme.colors.backgroundDisabled
-      : confirmed
-      ? theme.colors.success
-      : theme.colors.primary};
+    disabled ? theme.colors.backgroundDisabled : confirmed ? theme.colors.success : theme.colors.primary};
   border-radius: 50%;
   color: #ffffff;
   display: flex;
@@ -36,11 +32,7 @@ const Connector = styled.div<{ prevConfirmed?: boolean; disabled?: boolean }>`
   background: linear-gradient(
     90deg,
     ${({ theme, prevConfirmed, disabled }) =>
-        disabled
-          ? theme.colors.backgroundDisabled
-          : prevConfirmed
-          ? theme.colors.success
-          : theme.colors.primary}
+        disabled ? theme.colors.backgroundDisabled : prevConfirmed ? theme.colors.success : theme.colors.primary}
       0%,
     ${({ theme, prevConfirmed, disabled }) =>
         disabled
@@ -68,11 +60,7 @@ interface ProgressCirclesProps {
  *
  * @param steps  array of booleans where true means step is complete
  */
-export default function ProgressCircles({
-  steps,
-  disabled = false,
-  ...rest
-}: ProgressCirclesProps) {
+export default function ProgressCircles({ steps, disabled = false, ...rest }: ProgressCirclesProps) {
   return (
     <AutoColumn justify="center" {...rest}>
       <Grouping>
@@ -80,19 +68,14 @@ export default function ProgressCircles({
           return (
             // eslint-disable-next-line react/no-array-index-key
             <CircleRow key={i}>
-              <Circle
-                confirmed={step}
-                disabled={disabled || (!steps[i - 1] && i !== 0)}
-              >
+              <Circle confirmed={step} disabled={disabled || (!steps[i - 1] && i !== 0)}>
                 {step ? '✓' : i + 1}
               </Circle>
               <Connector prevConfirmed={step} disabled={disabled} />
             </CircleRow>
           )
         })}
-        <Circle disabled={disabled || !steps[steps.length - 1]}>
-          {steps.length + 1}
-        </Circle>
+        <Circle disabled={disabled || !steps[steps.length - 1]}>{steps.length + 1}</Circle>
       </Grouping>
     </AutoColumn>
   )

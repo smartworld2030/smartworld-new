@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { CurrencyAmount, currencyEquals } from '@pancakeswap/sdk'
 import { InjectedModalProps } from '@smartworld-libs/uikit'
 import { useTranslation } from 'contexts/Localization'

@@ -1,6 +1,6 @@
 import { Currency, ETHER } from '@pancakeswap/sdk'
 import { BinanceIcon } from '@smartworld-libs/uikit'
-import React from 'react'
+
 import styled from 'styled-components'
 import { useCurrencyLogoSource } from '.'
 import Logo from './Logo'

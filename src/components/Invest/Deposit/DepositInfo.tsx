@@ -4,6 +4,7 @@ import ConfirmDepositModal from 'components/Swap/components/ConfirmDepositModal'
 import { useApproveCallback } from 'hooks/useApproveCallback'
 import { useInvestAddress } from 'hooks/useContract'
 import { useInvestDepositCallback } from 'hooks/useInvestDepositCallback'
+
 import DepositButton from '../../Layout/DepositButton'
 
 interface DepositInfoProps {

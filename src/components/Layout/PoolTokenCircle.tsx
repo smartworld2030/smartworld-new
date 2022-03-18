@@ -2,6 +2,7 @@ import { IconButton } from '@smartworld-libs/uikit'
 import { DoubleCurrencyLogo } from 'components/Logo'
 import { useCurrency } from 'hooks/Tokens'
 import useTokenAdress from 'hooks/useTokenAddress'
+
 import { useSpring, animated as a } from 'react-spring'
 
 interface CircleProps {

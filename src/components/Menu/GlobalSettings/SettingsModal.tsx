@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Text, Toggle, Flex, InjectedModalProps } from '@smartworld-libs/uikit'
 import { useExpertModeManager, useUserSingleHopOnly } from 'state/user/hooks'
 import { useTranslation } from 'contexts/Localization'

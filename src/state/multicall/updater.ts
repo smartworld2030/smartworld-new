@@ -35,7 +35,7 @@ async function fetchChunk(
   let returnData
   try {
     // prettier-ignore
-    ;[resultsBlockNumber, returnData] = await multicallContract.aggregate(
+    [resultsBlockNumber, returnData] = await multicallContract.aggregate(
       chunk.map((obj) => [obj.address, obj.callData])
     )
   } catch (error) {
@@ -132,9 +132,10 @@ export default function Updater(): null {
     return outdatedListeningKeys(state.callResults, listeningKeys, chainId, latestBlockNumber)
   }, [chainId, state.callResults, listeningKeys, latestBlockNumber])
 
-  const serializedOutdatedCallKeys = useMemo(() => JSON.stringify(unserializedOutdatedCallKeys.sort()), [
-    unserializedOutdatedCallKeys,
-  ])
+  const serializedOutdatedCallKeys = useMemo(
+    () => JSON.stringify(unserializedOutdatedCallKeys.sort()),
+    [unserializedOutdatedCallKeys],
+  )
 
   useEffect(() => {
     if (!latestBlockNumber || !chainId || !multicallContract) return
