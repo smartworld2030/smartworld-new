@@ -38,8 +38,11 @@ export default function Updater(): null {
     [bankContract, tokenPrice],
   )
 
+  const blockNumber = useDebounce(latestBlockNumber, 1000)
+  const visible = useDebounce(windowVisible, 1000)
+
   useEffect(() => {
-    if (!latestBlockNumber || !windowVisible) return
+    if (!blockNumber || !visible) return
     async function multiCallRequest() {
       const results = await multiCallMultipleData(multiContract, calls, { requireSuccess: false })
       setData(results)
@@ -48,9 +51,9 @@ export default function Updater(): null {
       multiCallRequest()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [calls, windowVisible, latestBlockNumber])
+  }, [calls, visible, blockNumber])
 
-  const compiledStates = useMemo(() => {
+  const states = useMemo(() => {
     if (!Object.keys(data).length) return undefined
     return Object.keys(data).reduce(
       (items, method) =>
@@ -61,8 +64,6 @@ export default function Updater(): null {
       {},
     )
   }, [data])
-
-  const states = useDebounce(compiledStates, 500)
 
   useEffect(() => {
     if (!chainId || !states || !Object.keys(states).length) return

@@ -77,7 +77,10 @@ export function useProjectTokensList(): Token[] {
   const BNB = useCurrency('BNB') as Token
   const allTokens = useProjectTokenList()
 
-  return allTokens.reduce((token, items) => [...token, new Token(chainId, ...items)], [BNB])
+  return useMemo(
+    () => allTokens.reduce((token, items) => [...token, new Token(chainId, ...items)], [BNB]),
+    [BNB, allTokens, chainId],
+  )
 }
 
 export function useFilteredProjectToken(neededToken: string[]): { [key: string]: Token } {

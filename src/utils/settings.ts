@@ -23,7 +23,7 @@ export const getDefaultSettings = (): UserSettings => ({
 })
 
 export const getStorageKey = (account: string) => {
-  return `pancakeswap_settings_${account}_${VERSION}`
+  return `smartworld_settings_${account}_${VERSION}`
 }
 
 export const getSettings = (account: string): UserSettings => {

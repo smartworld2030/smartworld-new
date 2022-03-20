@@ -90,7 +90,6 @@ export const useGetBnbBalance = () => {
     if (account) {
       fetchBalance()
     }
-    return console.log('unmount')
   }, [account, lastUpdated, setBalance, setFetchStatus])
 
   return { balance, fetchStatus, refresh: setLastUpdated }

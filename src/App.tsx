@@ -36,6 +36,7 @@ const App = () => {
               flexDirection: 'column',
               justifyContent: 'space-between',
               minHeight: '100vh',
+              transform: 'translateZ(-1000px)',
             }}
             header={<Header />}
             mainBackground="transparent"

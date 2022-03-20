@@ -1,4 +1,4 @@
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
+import { configureStore } from '@reduxjs/toolkit'
 import { save, load } from 'redux-localstorage-simple'
 import { useDispatch } from 'react-redux'
 import application from './application/reducer'
@@ -13,6 +13,7 @@ import multicall from './multicall/reducer'
 import mint from './mint/reducer'
 import invest from './invest/reducer'
 import pool from './pool/reducer'
+import wallet from './wallet/reducer'
 
 const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists']
 
@@ -29,10 +30,14 @@ export const store = configureStore({
     swap,
     mint,
     burn,
+    wallet,
     multicall,
     lists,
   },
-  middleware: [...getDefaultMiddleware({ thunk: true }), save({ states: PERSISTED_KEYS })],
+  middleware: (getDefaultMiddleware) => [
+    ...getDefaultMiddleware({ thunk: true, serializableCheck: false }),
+    save({ states: PERSISTED_KEYS }),
+  ],
   preloadedState: load({ states: PERSISTED_KEYS }),
 })
 

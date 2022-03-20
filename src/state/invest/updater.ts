@@ -43,54 +43,54 @@ export default function Updater(): number {
             args: [[]],
           },
         ]
-  }, [investContract, account])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account])
 
-  useEffect(() => {
-    if (!latestBlockNumber || !windowVisible) return
-    cancelation.current = false
-    async function multiCallRequest() {
-      const results = await calls.then(async (multicalls) => await multiCallMultipleData(multiContract, multicalls))
-      const length = Number(results?.userDepositNumber)
-      const interest =
-        Number(results?.calculateInterest?.hourly?.toString()) +
-        Number(results?.calculateInterest?.referral?.toString())
-      if (length > 0) {
-        const multicalls: MultiCallMultipleData = {
-          ifs: investContract.interface,
-          address: investContract.address,
-          methods: ['USDToStts', 'userDepositDetails'],
-          args: [[interest], [account, 0]],
+  const blockNumber = useDebounce(latestBlockNumber, 1000)
+  const visible = useDebounce(windowVisible, 1000)
+
+  useEffect(
+    () => {
+      if (!blockNumber || !visible) return
+      cancelation.current = false
+      async function multiCallRequest() {
+        const results = await calls.then(async (multicalls) => await multiCallMultipleData(multiContract, multicalls))
+        const length = Number(results?.userDepositNumber)
+        const interest =
+          Number(results?.calculateInterest?.hourly?.toString()) +
+          Number(results?.calculateInterest?.referral?.toString())
+        if (length > 0) {
+          const multicalls: MultiCallMultipleData = {
+            ifs: investContract.interface,
+            address: investContract.address,
+            methods: ['USDToStts', 'userDepositDetails'],
+            args: [[interest], [account, 0]],
+          }
+          for (let i = 1; i < length; i++) {
+            multicalls.args.push([account, i])
+            multicalls.methods.push('userDepositDetails')
+          }
+          singleContractMultiCallRequest(multiContract, multicalls, false).then((res) => {
+            const [stts, ...rest] = res
+            results.calculateInterest = { ...results.calculateInterest, ...{ stts } }
+            if (!cancelation.current) setData({ ...results, userDepositDetails: rest })
+          })
+        } else {
+          if (!cancelation.current) setData(results)
         }
-        for (let i = 1; i < length; i++) {
-          multicalls.args.push([account, i])
-          multicalls.methods.push('userDepositDetails')
-        }
-        singleContractMultiCallRequest(multiContract, multicalls, false).then((res) => {
-          const [stts, ...rest] = res
-          results.calculateInterest = { ...results.calculateInterest, ...{ stts } }
-          if (!cancelation.current) setData({ ...results, userDepositDetails: rest })
-        })
-      } else {
-        if (!cancelation.current) setData(results)
       }
-    }
-    if (calls) {
-      multiCallRequest()
-    }
-    return () => {
-      cancelation.current = true
-    }
-  }, [
-    calls,
-    windowVisible,
-    latestBlockNumber,
-    multiContract,
-    investContract.interface,
-    investContract.address,
-    account,
-  ])
+      if (calls) {
+        multiCallRequest()
+      }
+      return () => {
+        cancelation.current = true
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [visible, blockNumber, account, calls],
+  )
 
-  const compiledStates = useMemo(() => {
+  const states = useMemo(() => {
     if (!Object.keys(data).length) return undefined
     return Object.keys(data).reduce(
       (items, method) =>
@@ -104,7 +104,6 @@ export default function Updater(): number {
       { loading: false },
     )
   }, [data])
-  const states = useDebounce(compiledStates, 500)
 
   useEffect(() => {
     if (!chainId && cancelation.current) return

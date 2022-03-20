@@ -9,14 +9,12 @@ import {
   Text,
 } from '@smartworld-libs/uikit'
 import { useWeb3React } from '@web3-react/core'
-import useTokenBalance, { useGetBnbBalance } from 'hooks/useTokenBalance'
-import { getSttsAddress } from 'utils/addressHelpers'
 import useAuth from 'hooks/useAuth'
 import { useTranslation } from 'contexts/Localization'
 import { getBscScanLink } from 'utils'
-import { getFullDisplayBalance } from 'utils/formatBalance'
 import CopyAddress from './CopyAddress'
 import ConnectWalletButton from 'components/ConnectWalletButton'
+import { useUserSmartTokenBalances } from 'state/wallet/hooks'
 
 interface WalletInfoProps {
   hasLowBnbBalance: boolean
@@ -26,8 +24,11 @@ interface WalletInfoProps {
 const WalletInfo: React.FC<WalletInfoProps> = ({ hasLowBnbBalance, onDismiss }) => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
-  const { balance } = useGetBnbBalance()
-  const { balance: sttsBalance } = useTokenBalance(getSttsAddress())
+  const {
+    balances: { STTS, BNB },
+    loading,
+  } = useUserSmartTokenBalances()
+
   const { logout } = useAuth()
 
   const handleLogout = () => {
@@ -54,11 +55,11 @@ const WalletInfo: React.FC<WalletInfoProps> = ({ hasLowBnbBalance, onDismiss }) 
       )}
       <Flex alignItems="center" justifyContent="space-between">
         <Text color="textSubtle">{t('BNB Balance')}</Text>
-        <Text>{getFullDisplayBalance(balance, 18, 6)}</Text>
+        {loading ? 'Loading...' : <Text>{BNB.toSignificant(6)}</Text>}
       </Flex>
       <Flex alignItems="center" justifyContent="space-between" mb="24px">
         <Text color="textSubtle">{t('STTS Balance')}</Text>
-        <Text>{getFullDisplayBalance(sttsBalance, 8, 2)}</Text>
+        {loading ? 'Loading...' : <Text>{STTS.toSignificant(2)}</Text>}
       </Flex>
       <Flex alignItems="center" justifyContent="end" mb="24px">
         <LinkExternal href={getBscScanLink(account, 'address')}>{t('View on BscScan')}</LinkExternal>

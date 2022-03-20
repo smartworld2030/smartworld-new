@@ -1,5 +1,5 @@
-import { KeyboardEvent, RefObject, useCallback, useRef, useState } from 'react'
-import { Currency, CurrencyAmount, ETHER, Pair, Token } from '@pancakeswap/sdk'
+import { RefObject, useCallback, useMemo, useRef, useState } from 'react'
+import { Currency, CurrencyAmount, Pair, Token } from '@pancakeswap/sdk'
 import { Input, SwapUnitList } from '@smartworld-libs/uikit'
 import { useTranslation } from 'contexts/Localization'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
@@ -35,14 +35,12 @@ export default function CurrencyInputPanel({
   onCurrencySelect,
   currency,
   disableCurrencySelect = false,
-  pair = null, // used for double token logo
   hideInput = false,
   otherCurrency,
   id,
   size,
   label,
   maxTokenCanBuy,
-  showCommonBases,
 }: CurrencyInputPanelProps) {
   const [showList, setShowList] = useState(false)
 
@@ -57,6 +55,7 @@ export default function CurrencyInputPanel({
 
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {
+      console.log(currency)
       onCurrencySelect(currency)
     },
     [onCurrencySelect],
@@ -66,20 +65,25 @@ export default function CurrencyInputPanel({
 
   const tokenPrice = useBUSDPrice(currency)?.toSignificant(3)
 
-  const balanceValues = (val: string) => {
-    const inputAsFloat = parseFloat(val)
-    return Number.isNaN(inputAsFloat) ? 0 : inputAsFloat * +tokenPrice
-  }
+  const balanceValues = useCallback(
+    (val: string) => {
+      const inputAsFloat = parseFloat(val)
+      return Number.isNaN(inputAsFloat) ? 0 : inputAsFloat * +tokenPrice
+    },
+    [tokenPrice],
+  )
 
-  const currencyValues =
-    +value && !Number.isNaN(value)
-      ? '~' +
-        balanceValues(value).toLocaleString(undefined, {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })
-      : '0.00'
-
+  const currencyValues = useMemo(
+    () =>
+      +value && !Number.isNaN(value)
+        ? '~' +
+          balanceValues(value).toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })
+        : '0.00',
+    [balanceValues, value],
+  )
   // manage focus on modal show
   const inputRef = useRef<HTMLInputElement>()
 
@@ -89,35 +93,23 @@ export default function CurrencyInputPanel({
     setSearchQuery(checksummedInput || input)
   }, [])
 
-  const handleEnter = useCallback(
-    (e: KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Enter') {
-        const s = debouncedQuery.toLowerCase().trim()
-        if (s === 'bnb') {
-          handleCurrencySelect(ETHER)
-          setShowList(false)
-        } else if (tokenList.length > 0) {
-          if (tokenList[0].symbol?.toLowerCase() === debouncedQuery.trim().toLowerCase() || tokenList.length === 1) {
-            handleCurrencySelect(tokenList[0])
-            setTimeout(() => {
-              setShowList(false)
-            }, 500)
-          }
-        }
-      }
-    },
-    [tokenList, handleCurrencySelect, debouncedQuery],
+  const balance = useMemo(
+    () =>
+      showMaxButton && label === 'OUTPUT'
+        ? maxTokenCanBuy?.toSignificant(6)
+        : selectedCurrencyBalance?.toSignificant(6),
+    [label, maxTokenCanBuy, selectedCurrencyBalance, showMaxButton],
   )
 
   return (
     <SwapUnitList
       showList={showList}
-      setShowList={(e) => {
-        setShowList(e)
-        if (e)
+      setShowList={(open) => {
+        if (open)
           setTimeout(() => {
             inputRef.current.focus()
           }, 100)
+        setShowList(open)
       }}
       topElement={
         <Input
@@ -126,29 +118,23 @@ export default function CurrencyInputPanel({
           placeholder={t('Search name or paste address')}
           scale="md"
           autoComplete="off"
-          onFocus={() => console.log('focus')}
           value={searchQuery}
           ref={inputRef as RefObject<HTMLInputElement>}
           onChange={handleInput}
-          onKeyDown={handleEnter}
         />
       }
-      id={label}
+      id={id}
+      image={srcs}
       token={currency}
       loading={label === 'INPUT' && !selectedCurrencyBalance ? (account ? true : false) : false}
       value={value}
       currencyValue={currencyValues}
       currencyUnit="USD"
-      balance={
-        showMaxButton && label === 'OUTPUT'
-          ? maxTokenCanBuy?.toSignificant(6)
-          : selectedCurrencyBalance?.toSignificant(6)
-      }
+      balance={balance}
       onUserInput={onUserInput}
       size={size < 160 ? 160 : size}
       margin={'auto'}
-      disabled={hideInput}
-      image={srcs}
+      disabled={disableCurrencySelect || hideInput}
       placeholder={selectedCurrencyBalance?.toSignificant(6)}
       onUnitSelect={(unit) => console.log(unit)}
       onTokenSelect={({ token }) => handleCurrencySelect(token as Token)}

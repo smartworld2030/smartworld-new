@@ -6,9 +6,6 @@ import { useCurrencyBalance } from '../../state/wallet/hooks'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import { CurrencyLogo, useCurrencyLogoSource, DoubleCurrencyLogo } from '../Logo'
 import useBUSDPrice from 'hooks/useBUSDPrice'
-import { useState } from 'react'
-
-const BAD_SRCS: { [tokenAddress: string]: true } = {}
 
 interface CurrencyInputPanelProps {
   value: string

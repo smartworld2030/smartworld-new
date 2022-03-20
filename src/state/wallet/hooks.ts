@@ -1,8 +1,8 @@
 import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount } from '@pancakeswap/sdk'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import ERC20_INTERFACE from 'config/abi/erc20'
-import { useAllTokens, useProjectTokensList } from 'hooks/Tokens'
+import { useAllTokens } from 'hooks/Tokens'
 import { useMulticallContract } from 'hooks/useContract'
 import { isAddress } from 'utils'
 import {
@@ -15,6 +15,9 @@ import { getMulticallContract } from 'utils/contractHelpers'
 import useIsWindowVisible from 'hooks/useIsWindowVisible'
 import useBlockNumber from 'state/application/hooks'
 import useDebounce from 'hooks/useDebounce'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import { useSelector } from 'react-redux'
+import { AppState } from 'state'
 
 /**
  * Returns a map of the given addresses to their eventually consistent BNB balances.
@@ -97,6 +100,7 @@ export function useProjectBalances(
 ): {
   [key: string]: CurrencyAmount
 } {
+  const cancelation = useRef(false)
   const [states, setStates] = useState({})
   const latestBlockNumber = useBlockNumber()
   const multiContract = getMulticallContract()
@@ -134,15 +138,19 @@ export function useProjectBalances(
   const visible = useDebounce(windowVisible, 1000)
 
   useEffect(() => {
+    cancelation.current = false
     if (account)
       multiCallRequest(multiContract, multicall, false)
         .then((result) => {
-          setStates(result)
+          if (!cancelation.current) setStates(result)
         })
         .catch((e) => {
           console.log(e)
-          setStates({})
+          if (!cancelation.current) setStates({})
         })
+    return () => {
+      cancelation.current = true
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, blockNumber, account])
 
@@ -220,8 +228,6 @@ export function useAllTokenBalances(): {
 
 // mimics useAllBalances
 export function useUserSmartTokenBalances(): { loading: boolean; balances: { [key: string]: CurrencyAmount } } {
-  const { account } = useWeb3React()
-  const allTokens = useProjectTokensList()
-  const balances = useProjectBalances(account, allTokens)
-  return { loading: !balances.BNB ? (account ? true : false) : false, balances }
+  const { chainId } = useActiveWeb3React()
+  return useSelector((state: AppState) => state.wallet[chainId ?? -1])
 }

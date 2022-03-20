@@ -363,11 +363,12 @@ export default function Swap() {
           otherCurrency={currencies[Field.OUTPUT]}
           hideBalance
           id="swap-currency-input"
-          size={width / 6}
+          size={width / 4}
           showCommonBases
         />
         <Flex justifyContent="space-between" flexDirection="column">
           <IconButton
+            safariFix
             blur={false}
             scale="sm"
             shape="circle"
@@ -394,7 +395,7 @@ export default function Swap() {
           hideBalance
           maxTokenCanBuy={maxTokenCanBuy}
           id="swap-currency-output"
-          size={width / 6}
+          size={width / 4}
           showCommonBases
         />
       </MainComponent>
@@ -407,7 +408,14 @@ export default function Swap() {
           <ConnectWalletButton shape="circle" />
         ) : showWrap ? (
           wrapInputError ?? (
-            <PayButton shape="circle" scale="xl" active={false} disabled={Boolean(wrapInputError)} onClick={onWrap}>
+            <PayButton
+              shape="circle"
+              safariFix
+              scale="xl"
+              active={false}
+              disabled={Boolean(wrapInputError)}
+              onClick={onWrap}
+            >
               {() => (
                 <Text bold>{wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null}</Text>
               )}
@@ -421,6 +429,7 @@ export default function Swap() {
         ) : showApproveFlow ? (
           <Flex justifyContent="space-between" width="30%">
             <Button
+              safariFix
               shape="circle"
               width="64px"
               variant={approval === ApprovalState.APPROVED ? 'success' : 'primary'}
@@ -440,6 +449,7 @@ export default function Swap() {
               )}
             </Button>
             <Button
+              safariFix
               shape="circle"
               width="64px"
               variant={isValid && priceImpactSeverity > 2 ? 'danger' : 'primary'}
