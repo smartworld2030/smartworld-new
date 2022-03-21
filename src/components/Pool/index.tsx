@@ -3,11 +3,11 @@ import WithdrawSection from './Withdraw'
 import DepositSection from './Deposit'
 import DetailSection from './Details'
 import { RouteProps } from 'react-router'
-import { MainContext } from '@smartworld-libs/uikit'
+import { MainSectionContext } from '@smartworld-libs/uikit'
 import { useContext } from 'react'
 
 const MainPool: React.FC<RouteProps> = () => {
-  var showTip = useContext(MainContext).showTip
+  var showTip = useContext(MainSectionContext).toggle.showTip
 
   return (
     <>

@@ -8,7 +8,7 @@ import App from './App'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { BLOCKED_ADDRESSES } from 'config/constants'
 import ApplicationUpdater from 'state/application/updater'
-// import BankUpdater from 'state/bank/updater'
+import BankUpdater from 'state/bank/updater'
 import WalletUpdater from 'state/wallet/updater'
 import MulticallUpdater from 'state/multicall/updater'
 import TransactionUpdater from 'state/transactions/updater'
@@ -28,6 +28,7 @@ function Updaters() {
       <ApplicationUpdater />
       <TransactionUpdater />
       <MulticallUpdater />
+      <BankUpdater />
       <WalletUpdater />
     </>
   )

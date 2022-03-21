@@ -19,6 +19,7 @@ import { isAddress } from '../utils'
 
 import { useBytes32TokenContract, useTokenContract } from './useContract'
 import { filterTokens } from 'components/SearchModal/filtering'
+import info from 'utils/contracts/info'
 
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens
 function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean): { [address: string]: Token } {
@@ -184,7 +185,7 @@ export function useToken(tokenAddress?: string): Token | undefined | null {
   const { chainId } = useActiveWeb3React()
   const tokens = useAllTokens()
 
-  const address = isAddress(tokenAddress)
+  const address = tokenAddress === 'STTS' ? info[chainId].STTS : isAddress(tokenAddress)
 
   const tokenContract = useTokenContract(address || undefined, false)
   const tokenContractBytes32 = useBytes32TokenContract(address || undefined, false)

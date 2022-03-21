@@ -39,6 +39,7 @@ export const Frame: React.FC<FrameProps> = ({ element, clickHandler, elementStyl
   //     ;(frame.current.material as any).color.lerp(c.set(hovered ? 0xffa500 : 0xffffff), 0.1)
   //   }
   // })
+
   return (
     <group ref={group} onClick={() => clickHandler(group.current)} {...props}>
       <mesh

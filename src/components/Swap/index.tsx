@@ -37,10 +37,10 @@ import SwapWarningModal from './components/SwapWarningModal'
 
 export default function Swap() {
   const history = useHistory()
+  const { t } = useTranslation()
   const { width } = useWindowSize()
   const loadedUrlParams = useDefaultsFromURLSearch()
 
-  const { t } = useTranslation()
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
     useCurrency(loadedUrlParams?.inputCurrencyId),
@@ -368,7 +368,6 @@ export default function Swap() {
         />
         <Flex justifyContent="space-between" flexDirection="column">
           <IconButton
-            safariFix
             blur={false}
             scale="sm"
             shape="circle"
@@ -408,30 +407,26 @@ export default function Swap() {
           <ConnectWalletButton shape="circle" />
         ) : showWrap ? (
           wrapInputError ?? (
-            <PayButton
-              shape="circle"
-              safariFix
-              scale="xl"
-              active={false}
-              disabled={Boolean(wrapInputError)}
-              onClick={onWrap}
-            >
+            <Button shape="circle" scale="xl" active={false} disabled={Boolean(wrapInputError)} onClick={onWrap}>
               {() => (
                 <Text bold>{wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null}</Text>
               )}
-            </PayButton>
+            </Button>
           )
         ) : noRoute && userHasSpecifiedInputOutput ? (
-          <>
-            <>{t('Insufficient liquidity for this trade.')}</>
-            {singleHopOnly && t('Try enabling multi-hop trades.')}
-          </>
+          <Text>
+            <Text color="text" mb="4px">
+              {t('Insufficient liquidity for this trade.')}
+            </Text>
+            <Text color="textSubtle" mb="4px">
+              {singleHopOnly && t('Try enabling multi-hop trades.')}
+            </Text>
+          </Text>
         ) : showApproveFlow ? (
-          <Flex justifyContent="space-between" width="30%">
+          <Flex justifyContent="space-around" height="64px" width="50%">
             <Button
-              safariFix
               shape="circle"
-              width="64px"
+              scale="lg"
               variant={approval === ApprovalState.APPROVED ? 'success' : 'primary'}
               onClick={approveCallback}
               disabled={approval !== ApprovalState.NOT_APPROVED || approvalSubmitted}
@@ -449,9 +444,8 @@ export default function Swap() {
               )}
             </Button>
             <Button
-              safariFix
               shape="circle"
-              width="64px"
+              scale="lg"
               variant={isValid && priceImpactSeverity > 2 ? 'danger' : 'primary'}
               onClick={() => {
                 if (isExpertMode) {

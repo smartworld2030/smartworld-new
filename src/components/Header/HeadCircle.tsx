@@ -36,7 +36,6 @@ export const HeadCircle: React.FC<HeadCircleProps> = ({
         scale={size}
         active={active}
         onClick={onClick}
-        safariFix
         // @ts-ignore
         to={link}
         icon={(w) => (text ? <p style={{ fontSize: 8, textDecoration: 'none' }}>{text}</p> : icon(w / 3))}

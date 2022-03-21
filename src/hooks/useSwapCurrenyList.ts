@@ -9,7 +9,7 @@ import useTokenComparator from 'components/SearchModal/sorting'
 import useCurrenciesLogoSources from 'components/Logo/CurrenciesLogoSources'
 import { useAddUserToken } from 'state/user/hooks'
 
-export default function useSwapCurrencyList(debouncedQuery: string, otherCurrency: Currency) {
+export default function useSwapCurrencyList(debouncedQuery: string, otherCurrency: Currency): Token[] {
   const allTokens = useAllTokens()
   const { account, chainId } = useActiveWeb3React()
 

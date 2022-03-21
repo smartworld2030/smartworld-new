@@ -42,20 +42,18 @@ export default function CurrencyInputPanel({
   label,
   maxTokenCanBuy,
 }: CurrencyInputPanelProps) {
+  const { t } = useTranslation()
   const [showList, setShowList] = useState(false)
 
   const srcs = useCurrencyLogoSource({ currency })
   const { account } = useActiveWeb3React()
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
 
-  const { t } = useTranslation()
-
   const [searchQuery, setSearchQuery] = useState<string>('')
   const debouncedQuery = useDebounce(searchQuery, 200)
 
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {
-      console.log(currency)
       onCurrencySelect(currency)
     },
     [onCurrencySelect],
@@ -100,17 +98,34 @@ export default function CurrencyInputPanel({
         : selectedCurrencyBalance?.toSignificant(6),
     [label, maxTokenCanBuy, selectedCurrencyBalance, showMaxButton],
   )
+  const listHandler = (open: boolean | ((prevState: boolean) => boolean)) => {
+    if (open)
+      setTimeout(() => {
+        inputRef.current.focus()
+      }, 100)
+    setShowList(open)
+  }
 
   return (
     <SwapUnitList
+      id={id}
       showList={showList}
-      setShowList={(open) => {
-        if (open)
-          setTimeout(() => {
-            inputRef.current.focus()
-          }, 100)
-        setShowList(open)
-      }}
+      image={srcs}
+      token={currency}
+      loading={label === 'INPUT' && !selectedCurrencyBalance ? (account ? true : false) : false}
+      value={value}
+      currencyValue={currencyValues}
+      currencyUnit="USD"
+      balance={balance}
+      margin="auto"
+      onUserInput={onUserInput}
+      size={size > 160 ? (size > 240 ? 240 : size) : 160}
+      disabled={disableCurrencySelect || hideInput}
+      placeholder={selectedCurrencyBalance?.toSignificant(6)}
+      onUnitSelect={(unit) => console.log(unit)}
+      onTokenSelect={({ token }) => handleCurrencySelect(token as Token)}
+      tokenList={tokenList}
+      setShowList={listHandler}
       topElement={
         <Input
           style={{ width: '95%', margin: 'auto', marginTop: '10px' }}
@@ -123,22 +138,6 @@ export default function CurrencyInputPanel({
           onChange={handleInput}
         />
       }
-      id={id}
-      image={srcs}
-      token={currency}
-      loading={label === 'INPUT' && !selectedCurrencyBalance ? (account ? true : false) : false}
-      value={value}
-      currencyValue={currencyValues}
-      currencyUnit="USD"
-      balance={balance}
-      onUserInput={onUserInput}
-      size={size < 160 ? 160 : size}
-      margin={'auto'}
-      disabled={disableCurrencySelect || hideInput}
-      placeholder={selectedCurrencyBalance?.toSignificant(6)}
-      onUnitSelect={(unit) => console.log(unit)}
-      onTokenSelect={({ token }) => handleCurrencySelect(token as Token)}
-      tokenList={tokenList}
     />
   )
 }

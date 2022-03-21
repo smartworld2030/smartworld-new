@@ -11,7 +11,7 @@ import ExpertModal from './ExpertModal'
 const SettingsModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
   const [showConfirmExpertModal, setShowConfirmExpertModal] = useState(false)
   const [rememberExpertModeAcknowledgement, setRememberExpertModeAcknowledgement] = usePersistState(false, {
-    localStorageKey: 'pancake_expert_mode_remember_acknowledgement',
+    localStorageKey: 'smartworld_expert_mode_remember_acknowledgement',
   })
   const [expertMode, toggleExpertMode] = useExpertModeManager()
   const [singleHopOnly, setSingleHopOnly] = useUserSingleHopOnly()

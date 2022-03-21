@@ -35,7 +35,6 @@ export const Frames: React.FC<FramesProps> = ({ elements, rotate, enabled, setEn
       if (typeof clicked.current === 'undefined') setEnabled(true)
     }, 2000)
     return () => {
-      setEnabled(false)
       clearTimeout(timer.current)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

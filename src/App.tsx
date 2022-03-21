@@ -1,17 +1,22 @@
+import {
+  MainSection,
+  CogIcon,
+  NoProfileAvatarIcon,
+  RelativeFlex,
+  AnimatedTipFlex,
+  ToastContainer,
+} from '@smartworld-libs/uikit'
 import { lazy, useMemo } from 'react'
 import { usePollBlockNumber } from 'state/block/hooks'
 import useEagerConnect from 'hooks/useEagerConnect'
 import { Switch } from 'react-router-dom'
 import { Redirect, Route } from 'react-router'
 import GlobalStyle from 'style/Global'
-import { RelativeFlex, ToastContainer } from '@smartworld-libs/uikit'
 import { Header } from 'components/Header'
 import MainPool from 'components/Pool'
-import { AnimatedTipFlex } from '@smartworld-libs/uikit'
 import SuspenseWithChunkError from 'components/SuspenseWithChunkError'
 import PageLoader from 'components/Loader/PageLoader'
 import WalletModal, { WalletView } from 'components/Menu/UserMenu/WalletModal'
-import { MainSection, CogIcon, NoProfileAvatarIcon } from '@smartworld-libs/uikit'
 import GlobalMenuModal from 'menu'
 import useToast from 'hooks/useToast'
 
@@ -31,13 +36,6 @@ const App = () => {
       <SuspenseWithChunkError fallback={<PageLoader />}>
         <Switch>
           <MainSection
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              minHeight: '100vh',
-              transform: 'translateZ(-1000px)',
-            }}
             header={<Header />}
             mainBackground="transparent"
             menuBackground="transparent"

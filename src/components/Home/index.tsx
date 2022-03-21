@@ -63,6 +63,6 @@ export default function Home() {
     },
   } = useTheme()
   const { width, height } = useWindowSize()
-  console.log(height)
+
   return <Fiber elements={elements1} width={width} height={height} backgroundColor={background} />
 }
