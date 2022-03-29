@@ -2382,10 +2382,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@smartworld-libs/uikit@^0.66.2":
-  version "0.66.2"
-  resolved "https://registry.yarnpkg.com/@smartworld-libs/uikit/-/uikit-0.66.2.tgz#cc82323e39aa6cca489c0508c0fe938440c4cad9"
-  integrity sha512-tIyCTUTdkd8G/lzXeqNO9kFL0SYi2sWjrraJCQQOpKQux7XKq/hp2zbC8MHFrE9wlMa2fi9vwac74+u2TBhrEA==
+"@smartworld-libs/uikit@^0.66.4":
+  version "0.66.4"
+  resolved "https://registry.yarnpkg.com/@smartworld-libs/uikit/-/uikit-0.66.4.tgz#531cce69165b4d3951f8392dc8b8f4fb2fdc4a5c"
+  integrity sha512-8QkEi7HyRmX2Z8TbKL8+HJt5L8GOwJvw+r4lIe/jwTn/y2+QNK9wLeyXcV8Cdv+tP4DJh1dyB3nAD2Kd8cgU/w==
   dependencies:
     "@popperjs/core" "^2.9.2"
     "@react-spring/core" "^9.4.3"

@@ -1,7 +1,6 @@
 import ReactDOM from 'react-dom'
-import { ReactNode, StrictMode, useEffect, useMemo } from 'react'
+import { ReactNode, StrictMode, useMemo } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
-import { elementScrollIntoViewPolyfill } from 'seamless-scroll-polyfill/lib/scrollIntoView.polyfill'
 import { Provider } from 'react-redux'
 import { store } from 'state'
 import App from './App'
@@ -48,29 +47,24 @@ const ThemeProviderWrapper = (props: any) => {
   return <ThemeProvider theme={isDark ? dark : light} {...props} />
 }
 
-const Providers: React.FC = ({ children }) => {
-  useEffect(() => {
-    elementScrollIntoViewPolyfill()
-  }, [])
+const Providers: React.FC = ({ children }) => (
+  <Web3ReactProvider getLibrary={getLibrary}>
+    <Provider store={store}>
+      <ToastsProvider>
+        <HelmetProvider>
+          <ThemeProviderWrapper>
+            <LanguageProvider>
+              <RefreshContextProvider>
+                <ModalProvider>{children}</ModalProvider>
+              </RefreshContextProvider>
+            </LanguageProvider>
+          </ThemeProviderWrapper>
+        </HelmetProvider>
+      </ToastsProvider>
+    </Provider>
+  </Web3ReactProvider>
+)
 
-  return (
-    <Web3ReactProvider getLibrary={getLibrary}>
-      <Provider store={store}>
-        <ToastsProvider>
-          <HelmetProvider>
-            <ThemeProviderWrapper>
-              <LanguageProvider>
-                <RefreshContextProvider>
-                  <ModalProvider>{children}</ModalProvider>
-                </RefreshContextProvider>
-              </LanguageProvider>
-            </ThemeProviderWrapper>
-          </HelmetProvider>
-        </ToastsProvider>
-      </Provider>
-    </Web3ReactProvider>
-  )
-}
 ReactDOM.render(
   <StrictMode>
     <Providers>
